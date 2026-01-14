@@ -1,0 +1,225 @@
+# Example pipeline configurations for the unified retrieval framework
+
+pipelines:
+  # Basic semantic search pipeline
+  basic_semantic:
+    name: 'Basic Semantic Search'
+    description: 'Simple vector-based semantic search'
+    strategies:
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrievalStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 1
+        config:
+          search_type: 'similarity'
+          search_kwargs:
+            k: 20
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.HybridScoreStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 2
+        config:
+          normalization: 'minmax'
+
+  # Multi-query enhanced search
+  multi_query_enhanced:
+    name: 'Multi-Query Enhanced Search'
+    description: 'Generate multiple queries for better coverage'
+    strategies:
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.MultiQueryStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 1
+        config:
+          num_queries: 5
+          include_original: true
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrievalStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 2
+        config:
+          search_type: 'similarity'
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.ContentBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 3
+
+  # Hybrid search with filtering
+  hybrid_filtered:
+    name: 'Hybrid Filtered Search'
+    description: 'Combined vector and BM25 search with smart filtering'
+    strategies:
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.AbbreviationExpansionStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 1
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.HybridRetrievalStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 2
+        config:
+          vector_weight: 0.6
+          bm25_weight: 0.4
+
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.RestrictionAwareFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 3
+        config:
+          boost_factor: 2.0
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.AuthorityBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 4
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.HybridScoreStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 5
+
+  # Class A focused pipeline
+  class_a_specialized:
+    name: 'Class A Reservist Search'
+    description: 'Optimized for Class A Reserve Force queries'
+    strategies:
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.MultiQueryStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 1
+        config:
+          num_queries: 3
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.HybridRetrievalStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 2
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.ClassAFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 3
+        config:
+          priority_boost: 2.0
+
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.RestrictionAwareFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 4
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.ContentBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 5
+        parallel_group: 'scoring'
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.AuthorityBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 5
+        parallel_group: 'scoring'
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.HybridScoreStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 6
+
+  # Advanced contextual pipeline
+  advanced_contextual:
+    name: 'Advanced Contextual Search'
+    description: 'Full pipeline with all enhancements'
+    strategies:
+      # Query Enhancement Phase
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.AbbreviationExpansionStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 1
+
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.QueryExpansionStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 2
+        config:
+          use_llm: true
+
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.MultiQueryStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 3
+
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.SelfQueryStrategy'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        order: 4
+
+      # Retrieval Phase
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.HybridRetrievalStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 5
+        config:
+          vector_weight: 0.5
+          bm25_weight: 0.5
+
+      # Filtering Phase
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.MetadataFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 6
+        config:
+          strict_filtering: false
+
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.ContextAwareFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 7
+        config:
+          context_window: 5
+          similarity_threshold: 0.6
+
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.RestrictionAwareFilterStrategy'
+        strategy_type: 'filtering'
+        enabled: true
+        order: 8
+
+      # Scoring Phase
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.ContentBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 9
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.AuthorityBoostStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 10
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.CooccurrenceScoreStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 11
+
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.HybridScoreStrategy'
+        strategy_type: 'scoring'
+        enabled: true
+        order: 12
+        config:
+          score_weights:
+            vector_similarity: 0.35
+            bm25: 0.25
+            content_boost: 0.15
+            authority_boost: 0.15
+            cooccurrence: 0.10
+
+      # Parent Document Expansion
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.ParentDocumentStrategy'
+        strategy_type: 'retrieval'
+        enabled: true
+        order: 13
+        config:
+          return_parents: false
+          chunk_overlap: 200

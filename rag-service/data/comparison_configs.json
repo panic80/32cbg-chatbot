@@ -1,0 +1,30 @@
+{
+  "baseline": {},
+  "more_retrieval_k25": {
+    "retrieval_k": 25
+  },
+  "more_retrieval_k30": {
+    "retrieval_k": 30
+  },
+  "higher_rrf_k90": {
+    "rrf_k": 90
+  },
+  "higher_rrf_k120": {
+    "rrf_k": 120
+  },
+  "hyde_disabled": {
+    "enable_hyde": false
+  },
+  "aggressive_rerank": {
+    "reranker_skip_similarity_threshold": 0.8
+  },
+  "conservative_rerank": {
+    "reranker_skip_similarity_threshold": 0.5
+  },
+  "hybrid_simple": {
+    "unified_retrieval_mode": "simple"
+  },
+  "hybrid_advanced": {
+    "unified_retrieval_mode": "advanced"
+  }
+}

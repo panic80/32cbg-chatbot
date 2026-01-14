@@ -1,0 +1,114 @@
+services:
+  # Node.js backend + React frontend
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cf-travel-bot
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - RAG_SERVICE_URL=http://rag-service:8000
+      - REDIS_URL=redis://redis:6379
+      - ENABLE_CACHE=true
+      - ENABLE_RATE_LIMIT=true
+      - ENABLE_LOGGING=true
+      - LOG_DIR=/var/log/cbthis
+      - CONFIG_PANEL_PASSWORD=${CONFIG_PANEL_PASSWORD:-changeme-config-password}
+      - ADMIN_API_TOKEN=${ADMIN_API_TOKEN:-changeme-admin-token}
+      - FRONTEND_URL=http://localhost:3000
+      - MODEL_CONFIG_PATH=/app/shared-config/model-config.json
+    env_file:
+      - .env
+    volumes:
+      - app-logs:/var/log/cbthis
+      - ./shared-config:/app/shared-config
+    depends_on:
+      redis:
+        condition: service_healthy
+      rag-service:
+        condition: service_healthy
+    networks:
+      - cf-travel-net
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Python FastAPI RAG service
+  rag-service:
+    build:
+      context: ./rag-service
+      dockerfile: Dockerfile
+    container_name: cf-rag-service
+    restart: unless-stopped
+    ports:
+      - '8000:8000'
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RAG_ENABLE_LLM_POOL=true
+      - RAG_ENABLE_STREAMING_RETRIEVAL=true
+      - RAG_ENABLE_QUERY_LOGGING=true
+      - RAG_ENABLE_HYDE=true
+      - RAG_ENCRYPT_QUERY_LOGS=false
+      - ADMIN_API_TOKEN=${ADMIN_API_TOKEN:-changeme-admin-token}
+      - MODEL_CONFIG_PATH=/app/shared-config/model-config.json
+    env_file:
+      - .env
+    volumes:
+      - rag-data:/app/data
+      - rag-logs:/var/log/cbthis
+      - chroma-data:/app/chroma_db
+      - ./shared-config:/app/shared-config
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - cf-travel-net
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/api/v1/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: cf-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - cf-travel-net
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  cf-travel-net:
+    driver: bridge
+
+volumes:
+  app-logs:
+  rag-data:
+  rag-logs:
+  chroma-data:
+  redis-data:

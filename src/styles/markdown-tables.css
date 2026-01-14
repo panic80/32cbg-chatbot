@@ -1,0 +1,100 @@
+/* Responsive Markdown Tables */
+
+/* Add shadow indicators for scrollable tables */
+.markdown-table-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  touch-action: pan-x; /* Better touch handling */
+  margin: 1rem 0;
+}
+
+/* Optional: Add shadow indicators to show scrollable content */
+.markdown-table-wrapper::before,
+.markdown-table-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s;
+}
+
+.markdown-table-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.9), transparent);
+}
+
+.markdown-table-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+}
+
+/* Dark mode support for shadows */
+@media (prefers-color-scheme: dark) {
+  .markdown-table-wrapper::before {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+  }
+
+  .markdown-table-wrapper::after {
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
+  }
+}
+
+/* Ensure tables maintain minimum width for readability */
+.markdown-table-wrapper table {
+  min-width: 600px;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .markdown-table-wrapper {
+    /* Add small padding to show scroll is available */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Reduce font size slightly on mobile for better fit */
+  .markdown-table-wrapper table {
+    font-size: 0.875rem;
+  }
+
+  .markdown-table-wrapper th,
+  .markdown-table-wrapper td {
+    padding: 0.5rem;
+  }
+}
+
+/* Optional: Hide scrollbar on webkit browsers for cleaner look */
+.markdown-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.markdown-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.markdown-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  .markdown-table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .markdown-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}

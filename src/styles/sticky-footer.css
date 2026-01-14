@@ -1,0 +1,95 @@
+/* Regular footer styling */
+footer {
+  border-top: 1px solid var(--border);
+  background-color: var(--background);
+  width: 100%;
+  z-index: 10;
+}
+
+/* Base styles for footer content */
+footer .max-w-5xl {
+  padding: 1rem 0;
+}
+/* Mobile-specific footer adjustments to reduce vertical space */
+@media (max-width: 768px) {
+  /* Reduce overall footer padding */
+  footer {
+    padding-top: 0.5rem \!important;
+    padding-bottom: 0.5rem \!important;
+  }
+
+  /* Reduce padding on footer container */
+  footer .max-w-5xl {
+    padding: 0.25rem 0 \!important;
+  }
+
+  /* Smaller padding on footer navigation */
+  footer nav {
+    margin: 0.25rem 0 \!important;
+  }
+
+  /* Reduce icon and text sizes */
+  footer nav a {
+    padding: 0.25rem \!important;
+  }
+
+  footer nav .w-5 {
+    width: 1rem \!important;
+    height: 1rem \!important;
+  }
+
+  /* Smaller text throughout footer */
+  footer .text-xs {
+    font-size: 0.625rem \!important;
+    line-height: 0.875rem \!important;
+  }
+
+  footer .text-sm {
+    font-size: 0.75rem \!important;
+    line-height: 1rem \!important;
+  }
+
+  /* Reduce spacing between icon and text */
+  footer .mt-1 {
+    margin-top: 0.125rem \!important;
+  }
+
+  /* Compact footer on ChatPage specifically */
+  .chat-page footer,
+  [data-page='chat'] footer {
+    display: none \!important; /* Hide footer completely on chat page mobile */
+  }
+
+  /* Reduce padding classes that might be used */
+  footer .py-6 {
+    padding-top: 0.5rem \!important;
+    padding-bottom: 0.5rem \!important;
+  }
+
+  footer .py-4 {
+    padding-top: 0.375rem \!important;
+    padding-bottom: 0.375rem \!important;
+  }
+
+  footer .py-2 {
+    padding-top: 0.25rem \!important;
+    padding-bottom: 0.25rem \!important;
+  }
+
+  footer .my-2 {
+    margin-top: 0.25rem \!important;
+    margin-bottom: 0.25rem \!important;
+  }
+}
+
+/* Even smaller on very small screens */
+@media (max-width: 480px) {
+  footer {
+    padding-top: 0.375rem \!important;
+    padding-bottom: 0.375rem \!important;
+  }
+
+  footer .text-xs {
+    font-size: 0.5625rem \!important; /* 9px */
+  }
+}

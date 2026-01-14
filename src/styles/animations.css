@@ -1,0 +1,347 @@
+/* Modern Animation Styles */
+
+/* Skeleton Shimmer Effect */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--border-rgb), 0.5) 0%,
+    rgba(var(--border-rgb), 0.3) 20%,
+    rgba(var(--border-rgb), 0.5) 40%,
+    rgba(var(--border-rgb), 0.3) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+[data-theme='dark'] .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Button Micro-animations */
+@keyframes button-press {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.98);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+.button-ripple:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+  transition:
+    width 0s,
+    height 0s,
+    opacity 0.6s;
+}
+
+/* Card Hover Effects */
+@keyframes card-glow {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.card-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .card-lift:hover {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Focus Animations */
+@keyframes input-focus-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+  }
+}
+
+.input-focus-ring:focus {
+  animation: input-focus-ring 0.3s ease-out forwards;
+}
+
+/* Floating Label Animation */
+.floating-label {
+  position: relative;
+}
+
+.floating-label input {
+  padding-top: 1.5rem;
+}
+
+.floating-label label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-out;
+  pointer-events: none;
+  color: var(--text-secondary);
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+  top: 0.5rem;
+  transform: translateY(0);
+  font-size: 0.75rem;
+  color: var(--primary);
+}
+
+/* Success/Error State Animations */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes check-mark {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+  100% {
+    stroke-dasharray: 100 100;
+  }
+}
+
+.check-mark {
+  animation: check-mark 0.3s ease-in-out forwards;
+}
+
+/* Page Transition Effects */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 0.4s ease-out forwards;
+}
+
+/* Stagger Animation Utility */
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+/* Reduced motion: disable non-essential animations globally */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-scale,
+  .animate-float-up,
+  .animate-gradient-xy,
+  .animate-gradient-shift,
+  .floating,
+  .glow,
+  .gradient-text,
+  .message-appear,
+  .message-transition,
+  .follow-up-appear,
+  .skeleton-shimmer,
+  .button-ripple,
+  .card-lift,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* Smooth Hover Transitions */
+.smooth-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading Dots Animation */
+@keyframes loading-dot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.loading-dots > span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  margin: 0 2px;
+  animation: loading-dot 1.4s ease-in-out infinite both;
+}
+
+.loading-dots > span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.loading-dots > span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+.loading-dots > span:nth-child(3) {
+  animation-delay: 0;
+}
+
+/* Parallax Scroll Effect */
+.parallax {
+  transform: translateY(var(--parallax-offset, 0));
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Gradient Animation */
+@keyframes gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 3s ease infinite;
+}
+
+/* Float Animation */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* GPU acceleration hints for smoother animations */
+.gpu-boost {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Mobile: reduce complexity for heavy animated elements */
+@media (max-width: 640px) {
+  .reduce-motion-mobile {
+    animation-duration: 0.5s !important;
+    animation-iteration-count: 1 !important;
+  }
+}

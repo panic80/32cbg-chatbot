@@ -1,0 +1,2 @@
+export const AUTOCOMPLETE_MIN_CHARS = 2;
+export const AUTOCOMPLETE_DEBOUNCE_MS = 300;

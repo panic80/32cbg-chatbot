@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output (rebuilt in container)
+dist/
+
+# Development files
+.git/
+.github/
+.vscode/
+.idea/
+
+# Environment files (use env_file in compose)
+.env
+.env.*
+!.env.template
+
+# Logs
+*.log
+logs/
+/var/log/
+
+# Test files
+coverage/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+__tests__/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Python RAG service (separate build)
+rag-service/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*~

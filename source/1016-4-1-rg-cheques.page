@@ -1,0 +1,442 @@
+<!--[if lt IE 9]><html xmlns="http://www.w3.org/1999/xhtml" lang="en" class="no-js lt-ie9"><![endif]--><!--[if gt IE 8]><!--><html xmlns="http://www.w3.org/1999/xhtml" class="no-js " lang="en">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<title>Chapter 1016-4-1 | RG Cheques &ndash; Intercept and Post Issue | Financial Administration Manual (FAM)</title>
+<meta name="keywords" content="financial administration manual, fam, chapter, 1016-4-1, RG, Receiver General, cheques, checks"/>
+<meta name="description" content="Chapter 1016-4-1 of the FAM sets out the procedures to be followed if a payment request needs to be intercepted prior to or after RG cheque issuance or if an RG cheque must be cancelled."/>
+
+<!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+http://wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+<link rel="canonical" href="https://cfo-dpf.mil.ca/en/policy-procedure-fam/1016-4-1-rg-cheques.page"/>
+<meta name="dcterms.creator" content="Government of Canada, National Defence, Assistant Deputy Minister (Finance and Corporate Services)"/>
+<meta name="dcterms.subject" content="Armed forces" title="gccore"/>
+<meta name="dcterms.description" content="Chapter 1016-4-1 of the FAM sets out the procedures to be followed if a payment request needs to be intercepted prior to or after RG cheque issuance or if an RG cheque must be cancelled."/>
+<meta name="dcterms.title" content="Chapter 1016-4-1 | RG Cheques – Intercept and Post Issue | Financial Administration Manual (FAM)"/>
+<meta name="dcterms.issued" content="2014-08-13" title="W3CDTF"/>
+<meta name="dcterms.modified" content="2023-03-23" title="W3CDTF"/>
+<meta name="dcterms.language" content="eng" title="ISO639-2"/>
+<meta name="review_date" content="2023-04-30" title="W3CDTF"/>
+<meta name="pageAuthor" content=""/>
+<meta name="viewport" content="width=device-width, initial-scale=1" /> <link rel="shortcut icon" href="/common/build/theme-gcwu-fegc/images/favicon.ico" /> <!--[if gte IE 9 | !IE ]><!--> <link href="/common/dist-gcwu-fegc/theme-gcwu-fegc/assets/favicon.ico" rel="icon" type="image/x-icon"> <link rel="stylesheet" href="/common/dist-gcwu-fegc/theme-gcwu-fegc/css/theme.min.css"> <!--<![endif]--> <!--[if lt IE 9]> <link href="/common/dist-gcwu-fegc/theme-gcwu-fegc/assets/favicon.ico" rel="shortcut icon" /> <link rel="stylesheet" href="/common/dist-gcwu-fegc/theme-gcwu-fegc/css/ie8-theme.min.css" /> <script src="/common/dist-gcwu-fegc/js/jquery/1.11.1/jquery.min.js"></script> <script src="/common/dist-gcwu-fegc/wet-boew/js/ie8-wet-boew.min.js"></script> <![endif]--> <noscript><link rel="stylesheet" href="/common/dist-gcwu-fegc/wet-boew/css/noscript.min.css" /></noscript> <link rel="stylesheet" href="/common/dnd_custom/customGlobal.css" /> <link rel="stylesheet" href="/common/dnd_custom/dnd-intranet.css" /> <link rel="stylesheet" href="/common/dnd_custom/fontawesome/css/font-awesome.min.css" /><script>window.webtrendsAsyncInit=function(){var dcs=new Webtrends.dcs().init({dcsid:"dcshy1qop10000w8ck5s7wita_1s8t",domain:"statssdc.mil.ca",timezone:-5,i18n:true,offsite:true,download:true,downloadtypes:"xls,doc,pdf,txt,csv,zip,docx,xlsx,rar,gzip,jpg,jpeg,gif,png,mov,avi,mpg,mpeg,ppt,pptx,pps,mp3,mp4,flv,xlt",onsitedoms:"cfo-dpf.mil.ca",fpcdom:".cfo-dpf.mil.ca"}).track();};(function(){var s=document.createElement("script"); s.async=true; s.src="/common/webtrends/webtrends.min.js";var s2=document.getElementsByTagName("script")[0]; s2.parentNode.insertBefore(s,s2);}());</script></head>
+<body typeof="WebPage" vocab="http://schema.org/"><ul id="wb-tphp"> <li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li> <li class="wb-slc"><a class="wb-sl" href="#wb-info">Skip to "About this site"</a></li> </ul> <span typeof="Organization">
+<meta content="Department_of_National_Defence" property="legalName"/>
+</span><header role="banner">
+<!-- HeaderStart -->
+<div id="wb-bnr">
+<div id="wb-bar">
+<div class="container">
+<div class="row">
+<img src="/common/dnd_custom/images/sig-en.png" alt="National Defence" id="gcwu-sig"/>
+<ul class="list-inline" id="gc-bar">
+<li>
+<a href="https://www.canada.ca/en/department-national-defence.html" rel="external">Canada.ca</a>
+</li> <li>
+<a href="http://intranet.mil.ca/en/index.page" rel="external">Defence Team</a>
+</li> <li>
+<a href="http://intranet.mil.ca/en/organizations/organizations-lists.page" rel="external">Organizations</a>
+</li> <li>
+<a href="http://intranet.canada.ca/index-eng.asp?utm_source=referral&amp;utm_medium=email&amp;utm_term=departmental&amp;utm_campaign=launch" rel="external">GC Intranet</a>
+</li> <li id="wb-lng">
+<h2>Language selection</h2>
+<ul class="list-inline">
+<li>
+<a lang="fr" href="/fr/politque-procedure-maf/1016-4-1-rg-cheques.page">Fran&ccedil;ais</a>
+</li>
+</ul>
+</li>
+</ul>
+<section id="wb-glb-mn" class="wb-mb-links col-xs-12 visible-sm visible-xs">
+<h2>Search and menus</h2>
+<ul class="pnl-btn list-inline text-right">
+<li>
+<a role="button" class="overlay-lnk btn btn-sm btn-default" aria-controls="mb-pnl" title="Search and menus" href="#mb-pnl">
+<span class="glyphicon glyphicon-search">
+<span class="glyphicon glyphicon-th-list">
+<span class="wb-inv">Search and menus</span>
+</span>
+</span>
+</a>
+</li>
+</ul>
+<div id="mb-pnl"></div>
+</section>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-5" id="wb-sttl">
+<a href="/FinCS_Intranet/index.page">
+<span>Assistant Deputy Minister (Finance)</span>
+</a>
+</div>
+<object type="image/svg+xml" aria-label="Symbol of the Government of Canada" tabindex="-1" role="img" data="/common/dist-gcwu-fegc/assets/wmms.svg" id="wmms"></object>
+<section id="wb-srch" class="visible-md visible-lg">
+<h2>Search</h2>
+<form class="form-inline" role="search" method="get" action="https://search.mil.ca/Srch.aspx">
+<div class="form-group">
+<label for="wb-srch-q">Search website</label>
+<input maxlength="150" size="27" value="" type="search" name="UsrQue" class="form-control" id="wb-srch-q" data-role="none"/>
+</div>
+<button class="btn btn-default" id="wb-srch-sub" type="submit" data-role="none">Search</button>
+<input value="eng" type="hidden" name="langs" data-role="none"/>
+<input value="ADM+Fin+CS__SMA+Fin+SM" name="ParamSources" type="hidden"/>
+<input value="Search" name="Action" type="hidden"/>
+</form>
+</section>
+</div>
+</div>
+</div>
+<nav id="wb-sm" class="wb-menu visible-md visible-lg" role="navigation" data-trgt="mb-pnl" typeof="SiteNavigationElement">
+<div class="pnl-strt container visible-md visible-lg nvbar">
+<h2>Topics menu</h2>
+<div class="row">
+<ul role="menubar" class="list-inline menu">
+<li>
+<a href="/FinCS_Intranet/info-by-role.page" class="&#10;          item&#10;        ">By role</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/for-adm-fin-personnel.page?">For ADM(Fin) personnel</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/info-by-role/comptroller.page">For comptrollers</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/info-by-role/financial-officer-clerk.page?">For financial officers and clerks</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/info-by-role/cashier.page">For ACS cashiers</a>
+</li>
+<li class="slflnk">
+<a href="/FinCS_Intranet/info-by-role.page">By role</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="/FinCS_Intranet/travel-hospitality.page" class="&#10;          item&#10;        ">Travel and hospitality</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="/FinCS_Intranet/travel-hospitality/travel-claims.page">Travel claims</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/travel-hospitality/before-you-travel.page" title="A TIN is a traveller identification number and a TAN is a travel authorization number.">Before you travel: Approval, TINs and TANs</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/travel-hospitality/hospitality.page">Hospitality, conference and event expenditures</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/travel-hospitality/travel-cards.page">Travel cards</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/travel-hospitality/booking-travel.page">Booking travel</a>
+</li>
+<li>
+<a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/official-travel.html">Passports and visas</a>
+</li>
+<li class="slflnk">
+<a href="/FinCS_Intranet/travel-hospitality.page">Travel and hospitality</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-policies-publications.page?" class="&#10;          item&#10;        ">Policies and publications</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="/FinCS_Intranet/fam.page">Financial Administration Manual (FAM)</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/systems-tools/cost-factors-manual.page?">Cost Factors Manual</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-policies-publications/reports.page?">Reports and publications</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/policy-procedure/provision-of-services.page">Provision of services</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/policy-procedure/fadir.page?">Financial Administration Directives</a>
+</li>
+<li class="slflnk">
+<a href="http://cfo-dpf.mil.ca/en/financial-policies-publications.page?">Policies and publications</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-procedures-processes.page?" class="&#10;          item&#10;        ">Procedures and processes</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-procedures-processes/delegation-of-authorities.page?">Delegation of authorities</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-procedures-processes/assets-inventory-accounting.page?">Assets and inventory accounting</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-procedures-processes/financial-management-procedures-guides.page?">Financial management procedures and guides</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/policy-procedure/vendor-management.page?">Vendor management</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/policy-procedure/capital-assets-and-wip-certification.page?">Certification of Capital Assets and Work-in-Progress</a>
+</li>
+<li class="slflnk">
+<a href="http://cfo-dpf.mil.ca/en/financial-procedures-processes.page?">Procedures and processes</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-systems-tools.page?" class="&#10;          item&#10;        ">Systems and tools</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="/FinCS_Intranet/systems-tools/claimsx.page">ClaimsX</a>
+</li>
+<li>
+<a href="https://xrs-stc.forces.mil.ca/currencies-devises/en/">Exchange rates</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/systems-tools/financial-coding.page">Financial coding</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/policy-procedure/payment-cards.page?">Payment cards</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/systems-tools/drmis.page?">DRMIS</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-systems-tools/financial-planning-forecasting.page?">Financial planning and forecasting</a>
+</li>
+<li class="slflnk">
+<a href="http://cfo-dpf.mil.ca/en/financial-systems-tools.page?">Systems and tools</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/for-adm-fin-personnel.page?" class="&#10;          item&#10;        ">ADM(Fin) personnel</a>
+<ul role="menu" class="sm list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/adm-fin/dpc-fin/comptroller.page?">Comptrollership</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/requesting-training.page?">Requesting training</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/harassment-prevention-and-resolution.page?">Harassment prevention and resolution</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/awards-and-recognition.page?">Awards and recognition</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/ndwcc-in-adm-fin.page?" title="National Defence Workplace Charitable Campaign">NDWCC</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/information-management-information-technology.page?" title="Information management / information technology">IM/IT</a>
+</li>
+<li class="slflnk">
+<a href="http://cfo-dpf.mil.ca/en/for-adm-fin-personnel.page?">ADM(Fin) personnel</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<nav id="wb-bc" role="navigation" property="breadcrumb">
+<h2>You are here:</h2>
+<div class="container">
+<div class="row">
+<ol class="breadcrumb"><li><a href="/FinCS_Intranet/index.page">ADM(Fin) Home</a></li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-policies-publications.page?">Financial policies and publications</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/fam.page">Financial Administration Manual (FAM)</a>
+</li>
+</ol>
+</div>
+</div>
+</nav>
+<!-- HeaderEnd -->
+</header>
+<main property="mainContentOfPage" role="main" class="container"><div class="ls-cmp-wrap ls-1st" id="w1653262463848"><div class="full">
+<div><h2>Financial Administration Manual</h2></div>
+</div>
+</div>
+<div class="ls-cmp-wrap" id="w1401352090496"><div>
+<h1 property="name" id="wb-cont">Chapter 1016-4-1 – Receiver General Cheques – Intercept and Post Issue</h1>
+</div>
+</div>
+<div class="ls-row-clr"></div>
+<div class="ls-row" id="wb-main-row">
+<div class="ls-fxr" id="ls-gen98471557-ls-fxr">
+<div class="ls-col col-md-3 pull-right" id="wb-right-col">
+<div class="ls-col-body" id="ls-gen98471558-ls-col-body">
+<div class="ls-cmp-wrap ls-1st" id="w1548433490660"><div class="col-md-3 mrgn-tp-sm    pull-right  small">
+<h2 class=" bg-info  h4">Contact us</h2>
+<p class="small"></p>
+<div class="list-group">
+<a href="/FinCS_Intranet/policy-procedure/governance-l1-compts.page" class="list-group-item list-group-item-panel">L1 comptrollers</a>
+</div>
+</div>
+</div>
+<div class="ls-row-clr"></div>
+</div>
+</div>
+<div class="ls-cmp-wrap ls-1st" id="w1401352090504"><div class="full">
+<h2>Overview</h2>
+<div><p><strong>Date of issue:&nbsp;</strong>June&nbsp;10, 2002</p>
+<p><strong>Supersession:</strong></p>
+<ul>
+<li class="">FAM, Volume 3, Chapter 51, Control and Cancellation of Receiver General Cheques</li>
+</ul>
+<p><strong>Purpose:&nbsp;</strong>The purpose of this FAM chapter is to set out the procedures to be followed in circumstances where:</p>
+<ul class="list-unstyled list-unstyled-v-cue">
+<li>a.&nbsp;a payment request needs to be intercepted prior to RG cheque issuance; or</li>
+<li>b. there exists a post-issue situation, such as the:
+<ul>
+<li>custody and disposition of a returned RG cheque;</li>
+<li>issuance of a replacement RG cheque; or</li>
+<li>cancellation of an RG cheque.</li>
+</ul>
+</li>
+</ul>
+<p>These procedures apply to all RG cheque requests initiated in FMAS and printed at PWGSC and Regional Departmental Accounting Offices (RDAO) SPS priority print sites.</p>
+<p>Note: For clarification purposes, this policy does not include information related to Canadian Armed Forces (CAF)/Public Service pay and superannuation cheques, Departmental Bank Account (DBA) cheques or Direct Funds Transfers (DFT).</p>
+<p><strong>Context:</strong> As part of the Financial Information Strategy (FIS), all of the department's request for payments are processed through the Financial Managerial Accounting System (FMAS) and electronically transmitted to Public Works Government Services Canada (PWGSC) via the Standard Payment System (SPS). This FAM chapter details the processes relating to Receiver General (RG) cheques prior to issuance by PWGSC (Interception), and after production and mailing by PWGSC (post-issue).</p>
+<p><a href="/assets/FinCS_Intranet/docs/en/policy-procedure-fam/1016-4-1.doc">FAM &ndash; Chapter 1016-4-1 (DOC, 156 KB)</a></p></div>
+</div>
+</div>
+<div class="ls-row-clr"></div>
+<div class="ls-row-clr"></div>
+</div>
+</div>
+<div class="ls-cmp-wrap ls-1st" id="w1461928999513"><div class="clearfix"></div><aside>
+<h2 class="new-row mrgn-lft-md">Departmental priorities</h2>
+<div class="new-row">
+<div class="col-md-3">
+<a href="https://www.canada.ca/en/department-national-defence/campaigns/the-caf-offer.html">
+<h3 class="h5">The CAF Offer</h3>
+<img alt="The CAF Offer" src="/assets/Intranet/images/priority-buttons/2023/caf-offer-web-banner-and-icons_v3.jpg" class="priorities-image img-responsive thumbnail mrgn-bttm-sm"/>
+</a>
+<p></p>
+</div>
+<div class="col-md-3">
+<a href="http://intranet.mil.ca/en/res/support-services/sexual-misconduct-home.page?WT.mc_id=pri-sm">
+<h3 class="h5">Sexual misconduct</h3>
+<img alt="Learn about sexual misconduct and how the Defence Team is addressing it." src="/assets/Intranet/images/priority-buttons/2021/v5-sexual-misconduct-departmental-priorities_dgm-41121-vxp-04.jpg" class="priorities-image img-responsive thumbnail mrgn-bttm-sm"/>
+</a>
+<p></p>
+</div>
+<div class="col-md-3">
+<a href="https://www.canada.ca/en/department-national-defence/services/benefits-military/health-support/total-health-and-wellness-strategy.html">
+<h3 class="h5">Total Health and Wellness Strategy</h3>
+<img alt="Total Health and Wellness Strategy" src="/assets/Intranet/images/priority-buttons/2022/banner-update-3-2.jpg" class="priorities-image img-responsive thumbnail mrgn-bttm-sm"/>
+</a>
+<p></p>
+</div>
+<div class="col-md-3">
+<a href="http://intranet.mil.ca/en/conduct-culture/index.page?WT.mc_id=pri-cc">
+<h3 class="h5">Conduct, culture, diversity and inclusion</h3>
+<img alt="Conduct, culture, diversity and inclusion" src="/assets/Intranet/images/priority-buttons/2021/v5-conduct-and-culture-departmental-priorities_dgm-41121-vxp-02.jpg" class="priorities-image img-responsive thumbnail mrgn-bttm-sm"/>
+</a>
+<p></p>
+</div>
+</div>
+</aside>
+</div>
+<div class="ls-cmp-wrap" id="w1401352090497"><div class="clearfix"></div><div class="pagedetails">
+<dl id="wb-dtmd">
+<dt>Date modified:</dt>
+<dd>
+<time property="dateModified">2023-03-23</time>
+</dd>
+</dl>
+</div>
+</div>
+<div class="ls-row-clr"></div>
+</main>
+<div class="ls-row-clr"></div><div class="global-footer">
+<footer id="wb-info">
+<div class="landscape">
+<nav class="container wb-navcurr">
+<ul class="list-inline" id="gc-tctr">
+<li>
+<a href="http://intranet.mil.ca/en/terms-conditions.page">Terms and conditions</a>
+</li>
+<li>
+<a href="http://forces.gc.ca/en/transparency.page">Transparency</a>
+</li>
+</ul>
+<div class="row">
+<section class="col-sm-3">
+<h3>
+<a href="/FinCS_Intranet/about.page">About ADM(Fin)</a>
+</h3>
+<ul class="list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/adm-fin/organization.page?">Organization</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-policies-publications/reports.page?">Reports and publications</a>
+</li>
+</ul>
+</section>
+<section class="col-sm-3">
+<h3>
+<a href="http://cfo-dpf.mil.ca/en/adm-fin/dpc-fin/spgc/communications-web-services.page?">Contact us</a>
+</h3>
+<ul class="list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/information-management-information-technology.page?">ADM(Fin) Group Services</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/policy-procedure/governance-l1-compts.page" title="Level 1 comptrollers">L1 comptrollers</a>
+</li>
+</ul>
+</section>
+<section class="col-sm-3">
+<h3>
+<a href="/FinCS_Intranet/index.page">News / Updates</a>
+</h3>
+<ul class="list-unstyled">
+<li>
+<a href="http://cfo-dpf.mil.ca/en/financial-news-updates/cdao-communiques.page?">CDAO communiqués</a>
+</li>
+<li>
+<a href="/FinCS_Intranet/news-updates/claimsx-communique.page" title="ClaimsX Communiqué">ClaimsX Communiqué</a>
+</li>
+</ul>
+</section>
+<section class="col-sm-3">
+<h3>
+<a href="http://cfo-dpf.mil.ca/en/for-adm-fin-personnel.page?" title="For Assistant Deputy Minister (Finance) personnel">For ADM(Fin) personnel</a>
+</h3>
+<ul class="list-unstyled">
+<li>
+<a href="/FinCS_Intranet/admfin-staff/awards-and-recognition.page">Awards and recognition in ADM(Fin)</a>
+</li>
+<li>
+<a href="http://cfo-dpf.mil.ca/en/admfin-staff/requesting-training.page?">Requesting training</a>
+</li>
+</ul>
+</section>
+</div>
+</nav>
+</div>
+<div class="brand">
+<div class="container">
+<div class="row">
+<h2>National Defence footer</h2>
+<div class="col-xs-6 visible-sm visible-xs tofpg">
+<a href="#wb-cont">
+Top of page
+<span class="glyphicon glyphicon-chevron-up"></span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<noscript><img alt="dcsimg" id="dcsimg" width="1" height="1" src="//statssdc.mil.ca/dcshy1qop10000w8ck5s7wita_1s8t/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=10.4.23&amp;dcssip=cfo-dpf.mil.ca"/></noscript><!--[if gte IE 9 | !IE ]><!--> <script src="/common/dist-gcwu-fegc/wet-boew/js/jquery/2.1.4/jquery.js"></script> <script src="/common/dist-gcwu-fegc/wet-boew/js/wet-boew.min.js"></script> <!--<![endif]--> <!--[if lt IE 9]> <script src="/common/dist-gcwu-fegc/wet-boew/js/ie8-wet-boew2.min.js"></script> <![endif]--> <script src="/common/dist-gcwu-fegc/theme-gcwu-fegc/js/theme.min.js"></script> <script src="/common/dist-gcwu-fegc/demos/feedback/demo/feedback.min.js"></script> <!-- CustomScriptsStart --> <script type="text/javascript" src="/common/dnd_custom/js/dnd-videotracking.js"></script> <script type="text/javascript" src="/common/dnd_custom/js/dnd-dropdownmenus.js?build=4.6.0"></script> <script type="text/javascript" src="/common/dnd_custom/js/dnd-tabs.js"></script> <!-- CustomScriptsEnd --></body>
+</html>

@@ -1,0 +1,117 @@
+:root {
+  /* Theme transition duration */
+  --theme-transition: 0.3s ease-in-out;
+
+  /* Light theme */
+  &[data-theme='light'] {
+    --background: #ffffff;
+    --background-secondary: #f8f7f4;
+    --card: #ffffff;
+    --card-rgb: 255, 255, 255;
+    --text: #0a3622;
+    --text-secondary: #1a4d35;
+    --primary: #0a3622;
+    --primary-rgb: 10, 54, 34;
+    --primary-hover: #082d1b;
+    --primary-active: #051e14;
+    --border: #e2d9c0;
+    --border-rgb: 226, 217, 192;
+
+    /* Semantic colors - Light */
+    --success: #0a3622;
+    --success-rgb: 10, 54, 34;
+    --success-hover: #082d1b;
+    --warning: #d4af37;
+    --warning-rgb: 212, 175, 55;
+    --warning-hover: #c9a027;
+    --error: #8b0000;
+    --error-rgb: 139, 0, 0;
+    --error-hover: #660000;
+    --info: #1a4d35;
+    --info-rgb: 26, 77, 53;
+    --info-hover: #0a3622;
+
+    /* Extended palette */
+    --muted: #f8f7f4;
+    --muted-foreground: #1a4d35;
+    --accent: #fffef7;
+    --accent-foreground: #0a3622;
+
+    transition:
+      background-color var(--theme-transition),
+      color var(--theme-transition),
+      border-color var(--theme-transition),
+      font-family 0s;
+  }
+
+  /* Dark theme */
+  &[data-theme='dark'] {
+    --background: #0a3622;
+    --background-secondary: #082d1b;
+    --card: #0f4029;
+    --card-rgb: 15, 64, 41;
+    --text: #ffffff;
+    --text-secondary: #e8d7b9;
+    --primary: #d4af37;
+    --primary-rgb: 212, 175, 55;
+    --primary-hover: #e0c350;
+    --primary-active: #c9a027;
+    --border: #1a4d35;
+    --border-rgb: 26, 77, 53;
+
+    /* Semantic colors - Dark */
+    --success: #4ade80;
+    --success-rgb: 74, 222, 128;
+    --success-hover: #22c55e;
+    --warning: #fbbf24;
+    --warning-rgb: 251, 191, 36;
+    --warning-hover: #f59e0b;
+    --error: #ff6b6b;
+    --error-rgb: 255, 107, 107;
+    --error-hover: #ff5252;
+    --info: #d4af37;
+    --info-rgb: 212, 175, 55;
+    --info-hover: #e0c350;
+
+    /* Extended palette */
+    --muted: #0f4029;
+    --muted-foreground: #e8d7b9;
+    --accent: #1a4d35;
+    --accent-foreground: #d4af37;
+
+    transition:
+      background-color var(--theme-transition),
+      color var(--theme-transition),
+      border-color var(--theme-transition),
+      font-family 0s;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base styles */
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color var(--theme-transition);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: var(--primary);
+  color: white;
+}
+/* Fix: Right justify arrow for onboarding guide submodal under administrative tools */
+.onboarding-guide-submodal .arrow {
+  right: 0;
+  left: auto;
+}

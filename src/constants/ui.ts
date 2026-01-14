@@ -1,0 +1,11 @@
+export const MOBILE_BREAKPOINT_PX = 768;
+
+export const LOADING_DELAY_MS = 600;
+export const SECTION_LOADING_DELAY_MS = 800;
+export const MENU_HIGHLIGHT_DURATION_MS = 1500;
+
+export const COPY_TOAST_DURATION_MS = 2000;
+export const LOADING_DETAILS_DELAY_MS = 3000;
+export const FAQ_POLL_INTERVAL_MS = 5000;
+
+export const SCROLL_RECOVERY_STEPS_MS = [0, 50, 10, 200, 100] as const;

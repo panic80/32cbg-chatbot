@@ -1,0 +1,52 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark green background shield -->
+  <path
+    d="M3 4 C3 1, 29 1, 29 4 L29 20 C29 23, 16 30, 16 30 S3 23, 3 20 Z"
+    fill="#0a3622"
+    stroke="#d4af37"
+    strokeWidth="1"
+  />
+  
+  <!-- Gold inner border -->
+  <path
+    d="M6 7 C6 5, 26 5, 26 7 L26 18 C26 20, 16 25, 16 25 S6 20, 6 18 Z"
+    fill="none"
+    stroke="#d4af37"
+    strokeWidth="0.5"
+  />
+  
+  <!-- White crown -->
+  <g transform="translate(16, 11)">
+    <path
+      d="M-4 -1 L-4 -4 L-2 -2 L0 -5 L2 -2 L4 -4 L4 -1 Z"
+      fill="white"
+    />
+    <rect x="-4" y="-1" width="8" height="2" fill="white" />
+  </g>
+  
+  <!-- 32 text -->
+  <text
+    x="16"
+    y="20"
+    textAnchor="middle"
+    fill="#d4af37"
+    fontSize="6"
+    fontWeight="bold"
+    fontFamily="Arial, sans-serif"
+  >
+    32
+  </text>
+  
+  <!-- CBG text -->
+  <text
+    x="16"
+    y="25"
+    textAnchor="middle"
+    fill="white"
+    fontSize="4"
+    fontWeight="bold"
+    fontFamily="Arial, sans-serif"
+  >
+    CBG
+  </text>
+</svg>

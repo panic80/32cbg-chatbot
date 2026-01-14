@@ -1,0 +1,321 @@
+# Example configurations for unified retrieval system
+
+# Simple configuration - basic vector similarity search
+simple:
+  name: 'simple_unified_retriever'
+  description: 'Basic vector similarity search with minimal overhead'
+  pipeline_config:
+    name: 'simple_pipeline'
+    strategies:
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'similarity'
+          k: 10
+        order: 1
+
+# Balanced configuration - good mix of speed and accuracy
+balanced:
+  name: 'balanced_unified_retriever'
+  description: 'Balanced retrieval with query enhancement and multiple strategies'
+  enable_caching: true
+  cache_ttl: 3600
+  pipeline_config:
+    name: 'balanced_pipeline'
+    strategies:
+      # Query enhancement
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.MultiQueryEnhancer'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          num_queries: 3
+          include_original: true
+        order: 1
+
+      # Parallel retrieval strategies
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'similarity'
+          k: 15
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'mmr'
+          k: 15
+          lambda_mult: 0.5
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.BM25Retrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 15
+        parallel_group: 'retrieval'
+
+      # Scoring and merging
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.EnsembleScoring'
+        strategy_type: 'scoring'
+        enabled: true
+        config:
+          weights:
+            similarity: 0.4
+            mmr: 0.3
+            bm25: 0.3
+          merge_strategy: 'weighted'
+        order: 100
+
+# Advanced configuration - comprehensive multi-stage pipeline
+advanced:
+  name: 'advanced_unified_retriever'
+  description: 'Advanced multi-stage retrieval with all features enabled'
+  enable_caching: true
+  cache_ttl: 7200
+  pipeline_config:
+    name: 'advanced_pipeline'
+    config:
+      k: 20
+      deduplicate_docs: true
+    strategies:
+      # Query understanding
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.QueryClassifier'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          classification_prompt: 'Classify the following query into categories: RATE_LOOKUP, POLICY_QUESTION, ELIGIBILITY, PROCESS_INQUIRY, DEFINITION, COMPARISON, CALCULATION'
+        order: 1
+
+      # Query expansion
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.MultiQueryEnhancer'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          num_queries: 5
+          include_original: true
+          diversity_ranker: true
+        order: 2
+
+      # Abbreviation expansion
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.AbbreviationExpander'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          abbreviations:
+            TD: 'Temporary Duty'
+            PMV: 'Private Motor Vehicle'
+            R&Q: 'Rations and Quarters'
+            CF: 'Canadian Forces'
+            CAF: 'Canadian Armed Forces'
+            GMT: 'Government Motor Transport'
+        order: 3
+
+      # Metadata filtering
+      - strategy_class: 'app.unified_retrieval.strategies.filtering.MetadataFilter'
+        strategy_type: 'filtering'
+        enabled: true
+        config:
+          dynamic_filters: true
+        order: 4
+
+      # Parallel retrieval strategies
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'similarity'
+          k: 25
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'mmr'
+          k: 25
+          lambda_mult: 0.7
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.BM25Retrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 25
+          b: 0.75
+          k1: 1.2
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.ParentDocumentRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 15
+          child_k: 5
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.CooccurrenceRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 10
+          window_size: 100
+        parallel_group: 'retrieval'
+
+      # Ensemble scoring
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.EnsembleScoring'
+        strategy_type: 'scoring'
+        enabled: true
+        config:
+          weights:
+            similarity: 0.35
+            mmr: 0.25
+            bm25: 0.25
+            parent_document: 0.10
+            cooccurrence: 0.05
+          merge_strategy: 'weighted'
+          normalize_scores: true
+        order: 100
+
+      # Authority-based reranking
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.AuthorityScoring'
+        strategy_type: 'reranking'
+        enabled: true
+        config:
+          boost_factor: 2.0
+          authority_sources:
+            - 'official'
+            - 'policy'
+            - 'regulation'
+        order: 110
+
+      # Cross-encoder reranking
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.CrossEncoderReranking'
+        strategy_type: 'reranking'
+        enabled: true
+        config:
+          model_name: 'cross-encoder/ms-marco-MiniLM-L-6-v2'
+          batch_size: 32
+          device: 'cpu'
+        order: 120
+
+      # Contextual compression
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.ContextualCompression'
+        strategy_type: 'post_processing'
+        enabled: true
+        config:
+          compression_mode: 'hybrid'
+          similarity_threshold: 0.3
+          min_chunk_length: 500
+        order: 130
+
+# Table-specific configuration
+table_focused:
+  name: 'table_unified_retriever'
+  description: 'Optimized for retrieving table data and rates'
+  pipeline_config:
+    name: 'table_pipeline'
+    strategies:
+      # Table-specific query enhancement
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.TableQueryEnhancer'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          table_keywords:
+            - 'rate'
+            - 'allowance'
+            - 'table'
+            - 'meal'
+            - 'incidental'
+            - 'kilometric'
+          enhance_with_units: true
+        order: 1
+
+      # Retrieval strategies
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'similarity'
+          k: 20
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.TableAwareRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 20
+          prefer_tables: true
+        parallel_group: 'retrieval'
+
+      # Table-specific ranking
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.TableRanking'
+        strategy_type: 'scoring'
+        enabled: true
+        config:
+          boost_table_content: true
+          table_indicators:
+            - '|'
+            - 'table'
+            - 'rates'
+        order: 100
+
+# Custom configuration for specific use cases
+custom_travel_planning:
+  name: 'travel_planning_retriever'
+  description: 'Optimized for trip planning and cost estimation queries'
+  pipeline_config:
+    name: 'travel_planning_pipeline'
+    strategies:
+      # Travel-specific query enhancement
+      - strategy_class: 'app.unified_retrieval.strategies.query_enhancement.TravelQueryEnhancer'
+        strategy_type: 'query_enhancement'
+        enabled: true
+        config:
+          enhance_cost_queries: true
+          add_rate_keywords: true
+          trip_keywords:
+            - 'trip'
+            - 'travel'
+            - 'journey'
+            - 'cost'
+            - 'expense'
+            - 'estimate'
+        order: 1
+
+      # Multiple retrieval strategies
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.VectorRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          search_type: 'similarity'
+          k: 20
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.PolicyRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 15
+          focus_on_procedures: true
+        parallel_group: 'retrieval'
+
+      - strategy_class: 'app.unified_retrieval.strategies.retrieval.RateTableRetrieval'
+        strategy_type: 'retrieval'
+        enabled: true
+        config:
+          k: 10
+          include_all_rates: true
+        parallel_group: 'retrieval'
+
+      # Travel-specific scoring
+      - strategy_class: 'app.unified_retrieval.strategies.scoring.TravelRelevanceScoring'
+        strategy_type: 'scoring'
+        enabled: true
+        config:
+          prioritize_rates: true
+          prioritize_procedures: true
+        order: 100

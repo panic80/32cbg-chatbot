@@ -1,0 +1,151 @@
+# Example configurations for the unified retrieval framework
+
+# Simple semantic retriever
+simple_semantic:
+  name: 'simple_semantic_retriever'
+  description: 'Basic semantic search retriever'
+  preset: 'semantic'
+  strategy_preset: 'basic'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents'
+      embedding_model: 'text-embedding-ada-002'
+  top_k: 10
+  cache:
+    enabled: true
+    ttl: 3600
+
+# Enhanced query retriever with multi-query expansion
+multi_query:
+  name: 'multi_query_retriever'
+  description: 'Retriever with query enhancement and expansion'
+  preset: 'multi_query'
+  strategy_preset: 'enhanced_query'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents'
+      embedding_model: 'text-embedding-ada-002'
+  query_enhancement:
+    method: 'llm_expansion'
+    expand_acronyms: true
+    add_synonyms: true
+    language_model: 'gpt-3.5-turbo'
+  top_k: 15
+
+# Hybrid retriever with parallel vector and BM25 search
+hybrid_search:
+  name: 'hybrid_retriever'
+  description: 'Combined semantic and keyword search'
+  preset: 'hybrid'
+  strategy_preset: 'full_pipeline'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents'
+      embedding_model: 'text-embedding-ada-002'
+  custom_strategies:
+    - strategy_class: 'app.unified_retrieval.strategies.retrieval.BM25Strategy'
+      strategy_type: 'retrieval'
+      config:
+        index_name: 'cftb_bm25'
+      parallel_group: 'hybrid_retrieval'
+      order: 2
+  parallel_groups:
+    hybrid_retrieval: ['VectorStoreStrategy', 'BM25Strategy']
+  scoring:
+    method: 'weighted_fusion'
+    weights:
+      semantic: 0.7
+      keyword: 0.3
+
+# Citation-aware retriever
+citation_retriever:
+  name: 'citation_retriever'
+  description: 'Retriever optimized for citation tracking'
+  preset: 'citation'
+  strategy_preset: 'full_pipeline'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents'
+      embedding_model: 'text-embedding-ada-002'
+  filtering:
+    metadata_filters:
+      document_type: ['regulation', 'policy', 'guideline']
+  scoring:
+    method: 'citation_aware'
+    weights:
+      similarity: 0.7
+      citation_quality: 0.3
+  custom_strategies:
+    - strategy_class: 'app.unified_retrieval.strategies.post_processing.CitationEnrichmentStrategy'
+      strategy_type: 'post_processing'
+      config:
+        add_citations: true
+        citation_format: 'legal'
+      order: 5
+
+# Contextual retriever with conversation history
+contextual_retriever:
+  name: 'contextual_retriever'
+  description: 'Context-aware retriever using conversation history'
+  preset: 'contextual'
+  strategy_preset: 'full_pipeline'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents'
+      embedding_model: 'text-embedding-ada-002'
+  query_enhancement:
+    method: 'contextual'
+    context_window: 5
+    language_model: 'gpt-3.5-turbo'
+    prompt_template: |
+      Given the conversation history:
+      {history}
+
+      Rewrite the following query to be self-contained:
+      {query}
+  filtering:
+    metadata_filters:
+      relevance_score: { '$gte': 0.7 }
+  top_k: 20
+
+# Production-ready retriever with fallback
+production_retriever:
+  name: 'production_retriever'
+  description: 'Production retriever with monitoring and fallback'
+  preset: 'custom'
+  strategy_preset: 'full_pipeline'
+  vector_stores:
+    - type: 'chroma'
+      collection_name: 'cftb_documents_prod'
+      embedding_model: 'text-embedding-ada-002'
+      connection_params:
+        host: 'chroma-prod.internal'
+        port: 8000
+  query_enhancement:
+    method: 'smart'
+    expand_acronyms: true
+    language_model: 'gpt-3.5-turbo'
+  filtering:
+    metadata_filters:
+      status: 'active'
+      language: 'en'
+  scoring:
+    method: 'ml_reranker'
+    model: 'cross-encoder/ms-marco-MiniLM-L-12-v2'
+    threshold: 0.5
+  cache:
+    enabled: true
+    backend: 'redis'
+    redis_url: 'redis://redis-prod.internal:6379'
+    ttl: 7200
+    max_size: 10000
+  monitoring:
+    enabled: true
+    log_level: 'INFO'
+    performance_tracking: true
+    export_endpoint: 'http://metrics.internal/retriever'
+  timeout: 30
+  max_retries: 3
+  fallback_retriever:
+    class: 'app.retrievers.simple.SimpleVectorRetriever'
+    collection_name: 'cftb_documents_fallback'

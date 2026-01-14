@@ -1,0 +1,102 @@
+[
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/ch-01-introduction-effective-01-sept-2017.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "1",
+      "title": "Introduction",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-10-foreign-service.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "10",
+      "title": "Military Foreign Service Instructions",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-11-isolated-posts.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "11",
+      "title": "Isolated Posts",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-12-education-of-children.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "12",
+      "title": "Education Of Children",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-203-financial-benefits.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "203",
+      "title": "Financial Benefits Overview",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-204-pay-policy-officers-ncms-2023.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "204",
+      "title": "Pay of Officers and Non-Commissioned Members",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-205-allowances-for-officers-and-non-commissioned-members-2025-1.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "205",
+      "title": "Allowances for Officers and Non-Commissioned Members",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-208-relocation-benefits.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "208",
+      "title": "Relocation Benefits",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-209-transportation-expenses.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "209",
+      "title": "Transportation and Travelling Expenses",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  },
+  {
+    "url": "https://www.canada.ca/en/department-national-defence/corporate/policies-standards/compensation-benefits-instructions/chapter-210-misc-entitlements-grants.html",
+    "type": "web",
+    "metadata": {
+      "chapter": "210",
+      "title": "Entitlements and Grants",
+      "source_type": "CBI",
+      "document_category": "policy"
+    }
+  }
+]

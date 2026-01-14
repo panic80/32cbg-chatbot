@@ -1,0 +1,25 @@
+.submenu {
+  display: none;
+  position: absolute;
+  left: calc(100% - 300px);
+  top: 0;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+.menu-item:hover > .submenu {
+  display: block;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.menu-item.has-submenu > a::after {
+  content: '►';
+  position: absolute;
+  right: 10px;
+  font-size: 0.8em;
+}

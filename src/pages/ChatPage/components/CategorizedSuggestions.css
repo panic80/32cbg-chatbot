@@ -1,0 +1,79 @@
+/* CategorizedSuggestions tab variant styles */
+/* Security: Moved inline styles to external CSS file for XSS protection */
+
+/* Reset list appearance */
+[role="tablist"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+[role="tab"] {
+  border: 1px solid transparent;
+  transition: all 160ms ease;
+  color: var(--text) !important;
+}
+
+/* Variant A — segmented pills aligned with theme */
+.variant-a [role="tablist"] {
+  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.variant-a [role="tab"] {
+  background: var(--muted) !important;
+  border-color: var(--border) !important;
+  border-radius: var(--radius, 10px) !important;
+}
+
+.variant-a [role="tab"]:hover {
+  background: var(--background-secondary) !important;
+}
+
+.variant-a [data-state="active"][role="tab"] {
+  background: var(--background) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.4), 0 8px 16px rgba(0, 0, 0, 0.18) !important;
+  color: var(--text) !important;
+}
+
+/* Variant B — minimal with primary underline */
+.variant-b [role="tablist"] {
+  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.variant-b [role="tab"] {
+  position: relative;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border-radius: 4px !important;
+}
+
+.variant-b [role="tab"]:hover {
+  background: rgba(var(--primary-rgb), 0.08) !important;
+  color: var(--text) !important;
+}
+
+.variant-b [data-state="active"][role="tab"] {
+  color: var(--text) !important;
+}
+
+.variant-b [role="tab"]::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -2px;
+  height: 2px;
+  background: transparent;
+  border-radius: 2px;
+  transition: 180ms ease all;
+}
+
+.variant-b [data-state="active"][role="tab"]::after {
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+}

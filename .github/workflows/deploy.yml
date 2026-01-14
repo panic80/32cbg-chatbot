@@ -1,0 +1,467 @@
+name: Deploy CF Travel Bot
+
+on:
+  push:
+    branches:
+      - develop # Auto-deploy to staging
+      - main # Auto-deploy to production
+  pull_request:
+    branches:
+      - main # Run tests on PR to main
+
+env:
+  NODE_VERSION: '18'
+  PM2_HOME: '/home/${{ secrets.SERVER_USER }}/.pm2'
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+        env:
+          VITE_GEMINI_API_KEY: test-api-key-for-ci
+          NODE_ENV: test
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          retention-days: 7
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for staging
+        run: npm run build:staging
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to staging server
+        run: |
+          # Create deployment package
+          tar -czf cf-travel-bot-staging.tar.gz \
+            --exclude=node_modules \
+            --exclude=.git \
+            --exclude=.env.* \
+            --exclude=logs \
+            --exclude=screenshots \
+            --exclude=dev.log \
+            --exclude=proxy.log \
+            --exclude=server.log \
+            --exclude=vite.log \
+            --exclude=cf-travel-bot-staging.tar.gz \
+            --warning=no-file-changed \
+            .
+
+          # Test SSH connection with verbose output
+          echo "Testing SSH connection to ${{ secrets.SERVER_HOST }}..."
+          ssh -v -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo 'SSH connection successful'" || {
+            echo "SSH connection failed. Checking SSH agent and keys..."
+            ssh-add -l
+            echo "Trying SSH with more verbose output..."
+            ssh -vvv -o BatchMode=yes -o ConnectTimeout=10 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo 'test'" || true
+            exit 1
+          }
+
+          # Upload to server
+          echo "Uploading deployment package..."
+          scp -v -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=no cf-travel-bot-staging.tar.gz ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
+
+          # Deploy on server
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -e
+            
+            # Create deployment directory
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            DEPLOY_DIR="/home/${{ secrets.SERVER_USER }}/apps/cf-travel-bot-staging"
+            RELEASE_DIR="$DEPLOY_DIR/releases/$TIMESTAMP"
+            
+            mkdir -p $RELEASE_DIR
+            
+            # Extract application
+            cd $RELEASE_DIR
+            tar -xzf /tmp/cf-travel-bot-staging.tar.gz
+            rm /tmp/cf-travel-bot-staging.tar.gz
+            
+            # Install dependencies (including dev dependencies for build)
+            npm ci
+            
+            # Copy environment file
+            cp $DEPLOY_DIR/shared/.env.staging .env
+            
+            # Build frontend
+            npm run build:staging
+            
+            # Create backup of current release (if exists and valid)
+            if [ -L "$DEPLOY_DIR/current" ] && [ -d "$(readlink -f $DEPLOY_DIR/current)" ]; then
+              CURRENT_TARGET=$(readlink -f $DEPLOY_DIR/current)
+              if [ -d "$CURRENT_TARGET/dist" ]; then
+                BACKUP_DIR="$DEPLOY_DIR/backup/$(date +%Y%m%d%H%M%S)"
+                mkdir -p "$BACKUP_DIR"
+                echo "Creating backup from $CURRENT_TARGET to $BACKUP_DIR"
+                cp -r "$CURRENT_TARGET"/* "$BACKUP_DIR/" 2>/dev/null || {
+                  echo "WARNING: Backup creation failed, but continuing deployment"
+                }
+              else
+                echo "INFO: Current release has no dist folder, skipping backup"
+              fi
+            else
+              echo "INFO: No valid current symlink found, skipping backup (likely first deployment)"
+            fi
+            
+            # Update symlink atomically
+            ln -sfn $RELEASE_DIR $DEPLOY_DIR/current
+            
+            # Reload PM2 application
+            pm2 reload cf-travel-bot-staging || pm2 start ecosystem.config.cjs --only cf-travel-bot-staging
+            
+            # Cleanup old releases (keep last 3)
+            if [ -d "$DEPLOY_DIR/releases" ]; then
+              cd $DEPLOY_DIR/releases
+              ls -t 2>/dev/null | tail -n +4 | xargs -r rm -rf
+            fi
+            
+            # Cleanup old backups (keep last 3)
+            if [ -d "$DEPLOY_DIR/backup" ]; then
+              cd $DEPLOY_DIR/backup
+              ls -t 2>/dev/null | tail -n +4 | xargs -r rm -rf
+            fi
+          EOF
+
+      - name: Health check
+        run: |
+          sleep 10
+          for i in {1..5}; do
+            if curl -f -s http://${{ secrets.STAGING_URL }}/health; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Health check attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build:production
+
+      - name: Verify build output
+        run: |
+          echo "Verifying dist/ folder exists and contains files..."
+          ls -la dist/ || { echo "ERROR: dist/ folder not found after build"; exit 1; }
+          echo "Build verification complete"
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Debug SSH Setup
+        run: |
+          echo "=== BASIC DEBUG ==="
+          echo "Current user: $(whoami)"
+          echo "SSH agent PID: $SSH_AGENT_PID"
+          echo "SSH auth sock: $SSH_AUTH_SOCK"
+
+          echo "=== SECRET VALIDATION ==="
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then
+            echo "ERROR: SERVER_HOST secret is empty"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SERVER_USER }}" ]; then
+            echo "ERROR: SERVER_USER secret is empty"  
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "ERROR: SSH_PRIVATE_KEY secret is empty"
+            exit 1
+          fi
+          echo "All secrets are set"
+
+          echo "=== SSH AGENT STATUS ==="
+          ssh-add -l || echo "No keys in SSH agent"
+
+          echo "=== CONNECTIVITY TEST ==="
+          nc -zv ${{ secrets.SERVER_HOST }} 22 || echo "Cannot connect to port 22"
+
+          echo "=== SSH TEST ==="
+          ssh -vvv -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo success" || echo "SSH failed with code $?"
+
+      - name: Deploy to production server
+        run: |
+          set -ex  # Enable exit on error and command echoing
+          echo "Starting deployment..."
+
+          # Create deployment package
+          echo "Creating tar package..."
+          tar --version
+          echo "Current directory contents:"
+          ls -la
+
+          # Use simpler tar command first
+          tar -czf cf-travel-bot-production.tar.gz \
+            --exclude=node_modules \
+            --exclude=.git \
+            --exclude=logs \
+            --exclude=screenshots \
+            --exclude='*.log' \
+            --exclude=cf-travel-bot-production.tar.gz \
+            . 2>&1 || {
+            echo "Tar command failed with exit code $?"
+            echo "Trying basic tar without excludes..."
+            tar -czf cf-travel-bot-production.tar.gz . 2>&1 || {
+              echo "Even basic tar failed"
+              exit 1
+            }
+          }
+          echo "Package created successfully"
+
+          # Verify package was created
+          if [ ! -f cf-travel-bot-production.tar.gz ]; then
+            echo "ERROR: Package file was not created"
+            exit 1
+          fi
+          echo "Package size: $(du -h cf-travel-bot-production.tar.gz)"
+
+          # Upload to server
+          echo "Uploading deployment package..."
+          scp -v -o BatchMode=yes -o ConnectTimeout=30 -o StrictHostKeyChecking=no cf-travel-bot-production.tar.gz ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
+
+          # Deploy on server
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            set -e
+            
+            # Create deployment directory
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            DEPLOY_DIR="/home/${{ secrets.SERVER_USER }}/apps/cf-travel-bot"
+            RELEASE_DIR="$DEPLOY_DIR/releases/$TIMESTAMP"
+            
+            mkdir -p $RELEASE_DIR
+            
+            # Extract application
+            cd $RELEASE_DIR
+            tar -xzf /tmp/cf-travel-bot-production.tar.gz
+            rm /tmp/cf-travel-bot-production.tar.gz
+            
+            # Install dependencies (including dev dependencies for build)
+            npm ci
+            
+            # Copy environment file
+            cp $DEPLOY_DIR/shared/.env.production .env
+            
+            # Add build timestamp for cache busting
+            echo "BUILD_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> .env
+            
+            # Build frontend (ensure latest code is built)
+            npm run build:production
+            
+            # Verify dist folder was created
+            if [ ! -d "dist" ]; then
+              echo "ERROR: dist/ folder not created after build"
+              echo "Contents of release directory:"
+              ls -la
+              exit 1
+            fi
+            echo "✅ Build completed and dist/ folder verified"
+            
+            # Create backup of current release (if exists and valid)
+            if [ -L "$DEPLOY_DIR/current" ] && [ -d "$(readlink -f $DEPLOY_DIR/current)" ]; then
+              CURRENT_TARGET=$(readlink -f $DEPLOY_DIR/current)
+              if [ -d "$CURRENT_TARGET/dist" ]; then
+                BACKUP_DIR="$DEPLOY_DIR/backup/$(date +%Y%m%d%H%M%S)"
+                mkdir -p "$BACKUP_DIR"
+                echo "Creating backup from $CURRENT_TARGET to $BACKUP_DIR"
+                cp -r "$CURRENT_TARGET"/* "$BACKUP_DIR/" 2>/dev/null || {
+                  echo "WARNING: Backup creation failed, but continuing deployment"
+                }
+              else
+                echo "INFO: Current release has no dist folder, skipping backup"
+              fi
+            else
+              echo "INFO: No valid current symlink found, skipping backup (likely first deployment)"
+            fi
+            
+            # Update symlink atomically
+            ln -sfn $RELEASE_DIR $DEPLOY_DIR/current
+            
+            # Verify symlink points to correct release
+            SYMLINK_TARGET=$(readlink $DEPLOY_DIR/current)
+            if [ "$SYMLINK_TARGET" != "$RELEASE_DIR" ]; then
+              echo "ERROR: Symlink verification failed"
+              echo "Expected: $RELEASE_DIR"
+              echo "Actual: $SYMLINK_TARGET"
+              exit 1
+            fi
+            echo "✅ Symlink verified: points to $RELEASE_DIR"
+            
+            # Verify dist folder exists in current symlink
+            if [ ! -f "$DEPLOY_DIR/current/dist/index.html" ]; then
+              echo "ERROR: dist/index.html not accessible via current symlink"
+              echo "Symlink target contents:"
+              ls -la $DEPLOY_DIR/current/dist/ || echo "No dist directory"
+              exit 1
+            fi
+            echo "✅ Verified dist/index.html accessible via current symlink"
+            
+            # Restart PM2 application to pick up new symlink target
+            pm2 restart cf-travel-bot || pm2 start ecosystem.config.cjs --only cf-travel-bot
+            
+            # Cleanup old releases (keep last 5)
+            if [ -d "$DEPLOY_DIR/releases" ]; then
+              cd $DEPLOY_DIR/releases
+              ls -t 2>/dev/null | tail -n +6 | xargs -r rm -rf
+            fi
+            
+            # Cleanup old backups (keep last 3)
+            if [ -d "$DEPLOY_DIR/backup" ]; then
+              cd $DEPLOY_DIR/backup
+              ls -t 2>/dev/null | tail -n +4 | xargs -r rm -rf
+            fi
+          EOF
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment files and PM2 status..."
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            DEPLOY_DIR="/home/${{ secrets.SERVER_USER }}/apps/cf-travel-bot"
+            echo "=== Current deployment directory ==="
+            ls -la $DEPLOY_DIR/current/
+            echo ""
+            echo "=== Dist directory contents ==="
+            ls -la $DEPLOY_DIR/current/dist/ || echo "No dist directory found"
+            echo ""
+            echo "=== Package.json version ==="
+            cat $DEPLOY_DIR/current/package.json | grep '"version"' || echo "No version found"
+            echo ""
+            echo "=== Environment file ==="
+            grep BUILD_TIMESTAMP $DEPLOY_DIR/current/.env || echo "No build timestamp found"
+            echo ""
+            echo "=== PM2 process status ==="
+            pm2 list | grep cf-travel-bot || echo "PM2 process not found"
+            echo ""
+            echo "=== PM2 process info ==="
+            pm2 info cf-travel-bot || echo "No detailed info available"
+            echo ""
+            echo "=== Test API endpoints ==="
+            curl -s localhost:3000/health | head -5 || echo "Health check failed"
+            echo ""
+            curl -s localhost:3000/api/deployment-info | head -5 || echo "Deployment info failed"
+          EOF
+
+      - name: Health check
+        run: |
+          sleep 15
+          for i in {1..10}; do
+            echo "Health check attempt $i..."
+            if curl -f -s -L --max-redirs 3 http://${{ secrets.PRODUCTION_URL }}/health; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Health check attempt $i failed, retrying in 15s..."
+            sleep 15
+          done
+          echo "Health check failed - initiating rollback"
+
+          # Rollback on health check failure
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            DEPLOY_DIR="/home/${{ secrets.SERVER_USER }}/apps/cf-travel-bot"
+            
+            # Find latest backup with working dist folder
+            BACKUP_DIR=""
+            for backup in $(ls -t $DEPLOY_DIR/backup 2>/dev/null || echo ""); do
+              if [ -f "$DEPLOY_DIR/backup/$backup/dist/index.html" ]; then
+                BACKUP_DIR="$backup"
+                break
+              fi
+            done
+            
+            if [ -n "$BACKUP_DIR" ]; then
+              echo "Rolling back to $BACKUP_DIR (has working dist folder)"
+              rm -f $DEPLOY_DIR/current
+              ln -sfn $DEPLOY_DIR/backup/$BACKUP_DIR $DEPLOY_DIR/current
+              
+              # Verify rollback symlink
+              if [ -f "$DEPLOY_DIR/current/dist/index.html" ]; then
+                echo "✅ Rollback verified: dist/index.html accessible"
+                pm2 restart cf-travel-bot
+                echo "Rollback completed successfully"
+              else
+                echo "ERROR: Rollback failed - dist/index.html still not accessible"
+              fi
+            else
+              echo "ERROR: No suitable backup found with working dist folder"
+            fi
+          EOF
+          exit 1

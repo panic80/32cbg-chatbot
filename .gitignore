@@ -1,0 +1,110 @@
+.DS_Store
+node_modules
+dist
+
+# Environment files - NEVER commit these!
+.env
+.env.*
+!.env.template
+!.env.example
+
+# Backup files
+*.backup
+*.backup.*
+*.backup_*
+*.bak
+public_html.backup/
+.env.backup*
+backups/
+*.tar
+*.tar.gz
+*.zip
+
+# Installer artifacts
+rag-service/=*
+
+# Logs
+*.log
+logs/
+
+# Secure configuration
+/etc/cbthis/
+cbthis.service
+server/data/
+rag-service/.keys/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
+._*
+
+# Logs
+*.log
+logs/
+*_logs.txt
+
+# Environment files - NEVER commit these!
+.env
+.env.*
+!.env.template
+!.env.example
+
+# Dependencies
+node_modules
+.venv
+.pnpm-store
+
+# Build artifacts
+dist
+dist-server
+coverage/
+build/
+.next/
+
+# Testing & Cache
+.pytest_cache
+__pycache__
+.cache
+
+# IDE & Tools
+.vscode/
+.idea/
+.claude/
+
+# Archive & temporary
+archive/
+findings.json
+*.backup
+*.backup.*
+*.backup_*
+*.bak
+public_html.backup/
+.env.backup*
+backups/
+*.tar
+*.tar.gz
+*.zip
+
+# Data Sources
+source/
+
+# Installer artifacts
+rag-service/=*
+
+# Secure configuration
+/etc/cbthis/
+cbthis.service
+server/data/
+rag-service/.keys/
+
+# RAG vector store artifacts
+rag-service/chroma_db_backup*/
+rag-service/data/chromadb/
+shared-config/
+
+# Conductor
+conductor/

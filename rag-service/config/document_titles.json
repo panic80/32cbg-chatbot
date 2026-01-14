@@ -1,0 +1,88 @@
+{
+  "explicit_mappings": {
+    "delegation-of-authorities-for-financial-administration-for-dnd-caf (1).pdf": "Delegation of Authorities for Financial Administration for DND and CAF",
+    "delegation-of-authorities-matrix.pdf": "Delegation of Authorities Matrix",
+    "1016-7-4.docx.pdf": "FAM Chapter 1016-7-4: Travel Cards",
+    "1016-7.pdf": "FAM Chapter 1016-7: Departmental Credit Cards",
+    "1016-9.pdf": "FAM Chapter 1016-9: Accountable Advances",
+    "1017-3.pdf": "FAM Chapter 1017-3: Travel Expenditures"
+  },
+  "fam_chapters": {
+    "1014": "General",
+    "1014-1": "Purpose and Scope",
+    "1014-2": "Scope of Application",
+    "1014-3": "Definitions and Abbreviations",
+    "1014-4": "Authorities and Responsibilities",
+    "1015": "Financial Planning and Management",
+    "1015-1": "Financial Planning Framework",
+    "1015-5": "Budget Management",
+    "1016": "Financial Operations",
+    "1016-2": "Payment Processing",
+    "1016-3": "FAA Section 34",
+    "1016-4": "Cheques and Payment Methods",
+    "1016-6": "Banking Services",
+    "1016-7": "Departmental Credit Cards",
+    "1016-9": "Accountable Advances",
+    "1016-11": "Petty Cash",
+    "1017": "Travel and Relocation",
+    "1017-1": "General Travel Provisions",
+    "1017-2": "Travel Authorization",
+    "1017-3": "Travel Expenditures",
+    "1017-6": "Relocation",
+    "1018": "Hospitality and Events",
+    "1018-1": "Hospitality",
+    "1018-2": "Conference and Events",
+    "1018-3": "Commemorative Items",
+    "1019": "Reporting and Disclosure",
+    "1019-3": "Reporting Requirements",
+    "1019-4": "Financial Disclosure",
+    "1019-7": "Year-End Reporting",
+    "1020": "Revenue Management",
+    "1020-1": "Revenue Collection",
+    "1020-2": "Revenue Processing",
+    "1020-3": "Revenue Accounting",
+    "1020-4": "Receivables Management",
+    "1020-6": "Revenue Reconciliation",
+    "1021": "Assets and Inventory",
+    "1021-1": "Asset Management",
+    "1021-3": "Inventory Control",
+    "1021-4": "Asset Disposal",
+    "1022": "Contracting and Procurement",
+    "1022-1": "Procurement Framework",
+    "1023": "Financial Systems",
+    "1023-1": "System Controls"
+  },
+  "pattern_rules": [
+    {
+      "regex": "^(\\d{4})-(\\d+)-(\\d+)\\.(doc|pdf|docx)$",
+      "template": "FAM Chapter {chapter}-{section}-{subsection}",
+      "description_key": "{chapter}-{section}",
+      "comment": "Matches: 1014-1-1.doc → FAM Chapter 1014-1-1: Purpose and Scope"
+    },
+    {
+      "regex": "^(\\d{4})-(\\d+)\\.(doc|pdf|docx)$",
+      "template": "FAM Chapter {chapter}-{section}",
+      "description_key": "{chapter}-{section}",
+      "comment": "Matches: 1016-7.pdf → FAM Chapter 1016-7: Departmental Credit Cards"
+    },
+    {
+      "regex": "^(\\d{4})\\.(doc|pdf|docx)$",
+      "template": "FAM Chapter {chapter}",
+      "description_key": "{chapter}",
+      "comment": "Matches: 1015.doc → FAM Chapter 1015: Financial Planning and Management"
+    },
+    {
+      "regex": "^fam-chapter-(\\d{4})-(\\d+)-(.+)\\.(docx\\.)?pdf$",
+      "template": "FAM Chapter {chapter}-{section}: {title}",
+      "transform": "title_case",
+      "comment": "Matches: fam-chapter-1016-7-travel-cards.pdf"
+    }
+  ],
+  "fallback": {
+    "remove_extensions": true,
+    "replace_hyphens": " ",
+    "replace_underscores": " ",
+    "title_case": true,
+    "remove_numbers_at_end": true
+  }
+}

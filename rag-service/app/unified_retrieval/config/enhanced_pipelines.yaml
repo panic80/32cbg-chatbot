@@ -1,0 +1,194 @@
+# Enhanced Retrieval Pipeline Configurations
+# These pipelines leverage advanced quality enhancements
+
+pipelines:
+  # Comprehensive enhancement pipeline with all features
+  comprehensive_enhanced:
+    description: 'Full enhancement pipeline with caching, expansion, contextual scoring, and adaptive fusion'
+    strategies:
+      # Semantic cache check
+      - type: SemanticCacheStrategy
+        config:
+          similarity_threshold: 0.95
+          ttl: 3600
+          namespace: 'rag_semantic_cache'
+
+      # Advanced query expansion
+      - type: EnhancedQueryStrategy
+        config:
+          spacy_model: 'en_core_web_sm'
+
+      # Base retrieval (hybrid)
+      - type: HybridRetrievalStrategy
+        config:
+          vector_weight: 0.5
+          bm25_weight: 0.5
+          k: 20
+
+      # Adaptive hybrid fusion
+      - type: AdaptiveHybridStrategy
+        config: {}
+
+      # Contextual boosting
+      - type: ContextualBoostStrategy
+        config:
+          memory_size: 10
+          entity_boost: 0.2
+          topic_boost: 0.15
+          continuity_boost: 0.1
+
+      # Authority scoring
+      - type: AuthorityBoostStrategy
+        config:
+          boost_factor: 0.2
+
+    default_k: 10
+    max_k: 50
+
+  # Fast semantic cache pipeline
+  semantic_cache_fast:
+    description: 'Fast retrieval with semantic caching'
+    strategies:
+      # Check cache first
+      - type: SemanticCacheStrategy
+        config:
+          similarity_threshold: 0.9
+          ttl: 7200
+
+      # If cache miss, do standard retrieval
+      - type: VectorRetrievalStrategy
+        config:
+          k: 20
+
+      # Basic scoring
+      - type: ContentBoostStrategy
+        config:
+          keywords: ['policy', 'regulation', 'directive']
+          boost_factor: 0.15
+
+    default_k: 10
+
+  # Context-aware conversation pipeline
+  contextual_conversation:
+    description: 'Enhanced retrieval for multi-turn conversations'
+    strategies:
+      # Query expansion with context
+      - type: EnhancedQueryStrategy
+        config:
+          spacy_model: 'en_core_web_sm'
+
+      # Hybrid retrieval
+      - type: HybridRetrievalStrategy
+        config:
+          vector_weight: 0.6
+          bm25_weight: 0.4
+          k: 30
+
+      # Contextual reranking
+      - type: ContextualBoostStrategy
+        config:
+          memory_size: 15
+          entity_boost: 0.25
+          topic_boost: 0.2
+          continuity_boost: 0.15
+
+      # Metadata filtering
+      - type: MetadataFilterStrategy
+        config:
+          required_metadata: ['source', 'section']
+
+    default_k: 10
+
+  # Adaptive hybrid search pipeline
+  adaptive_hybrid:
+    description: 'Query-adaptive hybrid search with RRF'
+    strategies:
+      # Query analysis and expansion
+      - type: EnhancedQueryStrategy
+        config: {}
+
+      # Parallel retrieval
+      - type: HybridRetrievalStrategy
+        config:
+          vector_weight: 0.5
+          bm25_weight: 0.5
+          k: 40
+          parallel: true
+
+      # Adaptive RRF fusion
+      - type: RRFHybridStrategy
+        config:
+          rrf_k: 60
+          normalization_method: 'minmax'
+
+      # Co-occurrence scoring
+      - type: CooccurrenceScoreStrategy
+        config:
+          window_size: 100
+          boost_factor: 0.1
+
+    default_k: 15
+
+  # Domain-specific expansion pipeline
+  domain_expansion:
+    description: 'Canadian Forces domain-specific query expansion'
+    strategies:
+      # Abbreviation expansion
+      - type: AbbreviationExpansionStrategy
+        config:
+          abbreviations:
+            TD: 'temporary duty'
+            CAF: 'Canadian Armed Forces'
+            LTA: 'Leave Travel Assistance'
+            IRP: 'Integrated Relocation Program'
+            GMT: 'Government Motor Transport'
+
+      # Advanced domain expansion
+      - type: EnhancedQueryStrategy
+        config:
+          spacy_model: 'en_core_web_sm'
+
+      # Multi-query generation
+      - type: MultiQueryStrategy
+        config:
+          num_queries: 3
+          include_original: true
+
+      # Vector retrieval with expanded queries
+      - type: VectorRetrievalStrategy
+        config:
+          k: 25
+
+      # Authority boost for official sources
+      - type: AuthorityBoostStrategy
+        config:
+          authority_keywords: ['official', 'DND', 'policy', 'directive']
+          boost_factor: 0.3
+
+    default_k: 10
+
+# Strategy configurations
+strategy_configs:
+  SemanticCacheStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.SemanticCacheStrategy'
+    requires_embeddings: true
+    requires_redis: true
+
+  EnhancedQueryStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.EnhancedQueryStrategy'
+    requires_nlp: true
+
+  ContextualBoostStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.ContextualBoostStrategy'
+    requires_embeddings: true
+
+  RRFHybridStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.RRFHybridStrategy'
+
+  AdaptiveHybridStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.AdaptiveHybridStrategy'
+
+  ComprehensiveEnhancementStrategy:
+    class: 'app.unified_retrieval.strategies.enhanced_strategies.ComprehensiveEnhancementStrategy'
+    requires_embeddings: true
+    requires_redis: true

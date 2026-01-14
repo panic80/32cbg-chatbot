@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+*.egg
+
+# Development
+.git/
+.github/
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+!.env.template
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+*_test.py
+test_*.py
+
+# Data (mounted as volume)
+data/
+chroma_data/
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Documentation
+docs/
+*.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*~
