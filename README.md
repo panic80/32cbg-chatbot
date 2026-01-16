@@ -25,14 +25,14 @@ An AI-powered chatbot for Canadian Forces Travel Instructions (CFTI) policy guid
                     ▼               ▼               ▼
             ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
             │    Redis    │  │ RAG Service │  │ Google Maps │
-            │   (cache)   │  │  (FastAPI)  │  │     API     │
+            │  (optional) │  │  (FastAPI)  │  │     API     │
             └─────────────┘  └──────┬──────┘  └─────────────┘
                                     │
                     ┌───────────────┼───────────────┐
                     ▼               ▼               ▼
             ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-            │  ChromaDB   │  │   OpenAI    │  │  Anthropic  │
-            │  (vectors)  │  │   Gemini    │  │ OpenRouter  │
+            │ PostgreSQL  │  │   OpenAI    │  │  Anthropic  │
+            │ + pgvector  │  │   Gemini    │  │ OpenRouter  │
             └─────────────┘  └─────────────┘  └─────────────┘
 ```
 
@@ -43,71 +43,190 @@ An AI-powered chatbot for Canadian Forces Travel Instructions (CFTI) policy guid
 | Frontend | React 18 + Vite + TailwindCSS | `src/` | Chat UI, admin panels, trip planner |
 | Backend Gateway | Node.js + Express | `server/` | API routing, auth, rate limiting, caching |
 | RAG Service | Python FastAPI | `rag-service/` | Document retrieval, embeddings, LLM orchestration |
-| Vector Store | ChromaDB | `rag-service/chroma_db/` | Semantic search over policy documents |
-| Cache | Redis | - | Response caching, session state |
+| Vector Store | PostgreSQL + pgvector | - | Semantic search over policy documents |
+| Cache | Redis (optional) | - | Response caching (disabled by default) |
 
 ## Prerequisites
 
-- Node.js 18+ and npm
-- Python 3.10+ (for RAG service)
-- Redis (optional, for caching)
-- Docker & Docker Compose (optional, for containerized deployment)
+- **Node.js 18+** and npm
+- **Python 3.10+** (3.11 recommended)
+- **PostgreSQL 14+** with pgvector extension
+- Redis (optional, disabled by default)
 
-## Quick Start
+---
 
-### Local Development
+## Local Development Setup
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+Follow these steps in order to get the project running locally.
 
-2. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys
-   ```
-
-3. **Start development servers:**
-   ```bash
-   npm run dev:full
-   ```
-   Or use the helper script:
-   ```bash
-   ./start-dev.sh
-   ```
-
-4. **Access the application:**
-   - Frontend: http://localhost:3001
-   - Backend API: http://localhost:3000
-   - Health check: http://localhost:3000/health
-
-### Docker Deployment
+### Step 1: Clone the Repository
 
 ```bash
-# Start all services
-./docker-start.sh
-
-# Stop services
-./docker-stop.sh
+git clone https://github.com/panic80/32cbg-chatbot.git
+cd 32cbg-chatbot
 ```
 
-Docker exposes:
-- Application: http://localhost:3000
-- RAG Service: http://localhost:8000
+### Step 2: Install PostgreSQL with pgvector
+
+**macOS (Homebrew):**
+```bash
+brew install postgresql@14
+brew install pgvector
+
+# Start PostgreSQL
+brew services start postgresql@14
+
+# Create the database and enable pgvector
+psql postgres -c "CREATE DATABASE rag_vectorstore;"
+psql rag_vectorstore -c "CREATE EXTENSION IF NOT EXISTS vector;"
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install postgresql postgresql-contrib
+sudo apt install postgresql-14-pgvector
+
+sudo systemctl start postgresql
+
+sudo -u postgres psql -c "CREATE DATABASE rag_vectorstore;"
+sudo -u postgres psql -d rag_vectorstore -c "CREATE EXTENSION IF NOT EXISTS vector;"
+```
+
+**Verify pgvector is installed:**
+```bash
+psql rag_vectorstore -c "SELECT * FROM pg_extension WHERE extname = 'vector';"
+```
+
+### Step 3: Set Up the RAG Service (Python)
+
+```bash
+cd rag-service
+
+# Run the setup script (creates venv, installs dependencies)
+./setup.sh
+
+# Or manually:
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### Step 4: Install Node.js Dependencies
+
+```bash
+cd ..  # Back to project root
+npm install
+```
+
+### Step 5: Configure Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your API keys:
+
+```bash
+# Required - at least one LLM provider
+OPENAI_API_KEY=sk-your-openai-key-here
+
+# Optional LLM providers
+ANTHROPIC_API_KEY=your-anthropic-key
+GEMINI_API_KEY=your-gemini-key
+
+# Admin panel credentials
+CONFIG_PANEL_USER=admin
+CONFIG_PANEL_PASSWORD=your-secure-password
+ADMIN_API_TOKEN=your-admin-token
+
+# PostgreSQL (defaults work for local setup)
+DATABASE_URL=postgresql://localhost:5432/rag_vectorstore
+
+# Redis is DISABLED by default (uses in-memory fallbacks)
+# REDIS_URL=redis://localhost:6379
+# ENABLE_CACHE=false
+```
+
+### Step 6: Start All Services
+
+**Option A: Use the helper script (recommended)**
+```bash
+./start-local-dev.sh
+```
+
+This script:
+- Starts the Python RAG service (port 8000)
+- Starts the Node.js backend (port 3000)
+- Starts the Vite frontend (port 3001)
+- Disables Redis (uses in-memory fallbacks)
+
+**Option B: Start services manually**
+
+Terminal 1 - RAG Service:
+```bash
+cd rag-service
+source venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+Terminal 2 - Backend + Frontend:
+```bash
+npm run dev:full
+```
+
+### Step 7: Verify Everything is Running
+
+| Service | URL | What to Check |
+|---------|-----|---------------|
+| Frontend | http://localhost:3001 | Chat interface loads |
+| Backend | http://localhost:3000/health | Returns `{"status":"healthy"}` |
+| RAG Service | http://localhost:8000/api/v1/health | Returns health status |
+| RAG Docs | http://localhost:8000/api/v1/docs | Swagger UI loads |
+
+---
+
+## Quick Reference
+
+### Start Development
+```bash
+./start-local-dev.sh
+```
+
+### Stop All Services
+Press `Ctrl+C` in the terminal running `start-local-dev.sh`
+
+Or manually:
+```bash
+lsof -ti:3000,3001,8000 | xargs kill -9
+```
+
+### Rebuild After Code Changes
+
+Frontend/Backend changes: Auto-reloads (hot module replacement)
+
+RAG Service changes: Auto-reloads (uvicorn --reload)
+
+After dependency changes:
+```bash
+# Node.js
+npm install
+
+# Python
+cd rag-service && source venv/bin/activate && pip install -r requirements.txt
+```
+
+---
 
 ## Configuration
 
-Copy `.env.example` to `.env` and configure the following:
-
-### Required
+### Required Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `OPENAI_API_KEY` | OpenAI API key for GPT models |
+| `OPENAI_API_KEY` | OpenAI API key (required for embeddings) |
 | `CONFIG_PANEL_USER` | Admin panel username |
 | `CONFIG_PANEL_PASSWORD` | Admin panel password |
-| `ADMIN_API_TOKEN` | Token for admin API endpoints |
 
 ### LLM Providers (at least one required)
 
@@ -122,17 +241,13 @@ Copy `.env.example` to `.env` and configure the following:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `REDIS_URL` | `redis://localhost:6379` | Redis connection URL |
-| `ENABLE_CACHE` | `true` | Enable Redis caching |
-| `CACHE_TTL` | `3600000` | Cache TTL in milliseconds |
+| `DATABASE_URL` | `postgresql://localhost:5432/rag_vectorstore` | PostgreSQL connection |
+| `REDIS_URL` | `` (empty = disabled) | Redis connection URL |
+| `ENABLE_CACHE` | `false` | Enable Redis caching |
 | `RAG_SERVICE_URL` | `http://localhost:8000` | RAG service URL |
 | `GOOGLE_MAPS_API_KEY` | - | Google Maps API for trip planning |
-| `TRIP_PLANNER_MODEL` | `gpt-4.1-mini` | Model for trip planning |
-| `ENABLE_RATE_LIMIT` | `true` | Enable API rate limiting |
-| `RATE_LIMIT_MAX` | `60` | Max requests per window |
-| `RATE_LIMIT_WINDOW` | `60000` | Rate limit window (ms) |
 
-For production, store sensitive values in `/etc/cbthis/env`.
+---
 
 ## Available Scripts
 
@@ -144,9 +259,9 @@ For production, store sensitive values in `/etc/cbthis/env`.
 | `npm run build` | Build server and frontend for production |
 | `npm start` | Run production server |
 | `npm test` | Run tests with Vitest |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
 | `npm run lint` | Run ESLint and Prettier checks |
+
+---
 
 ## Features
 
@@ -166,89 +281,37 @@ For production, store sensitive values in `/etc/cbthis/env`.
 - Cache management
 - System settings
 
-### OPI Directory (`/opi`)
-- Office of Primary Interest contact list
-- Finance personnel points of contact
+---
 
-### Performance Dashboard (`/admin/performance`)
-- System metrics and monitoring
-- API response times
-- Cache hit rates
+## Troubleshooting
 
-### Resources (`/resources`)
-- Links to official CFTI documentation
-- Reference materials
+### "Port already in use" error
+```bash
+lsof -ti:3000,3001,8000 | xargs kill -9
+```
 
-## API Endpoints
+### RAG service won't start
+1. Check PostgreSQL is running: `pg_isready`
+2. Check pgvector extension: `psql rag_vectorstore -c "\dx"`
+3. Check venv is activated: `which python` should show `rag-service/venv/bin/python`
 
-### Public
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Health check |
-| `/api/chat` | POST | Send chat message |
-| `/api/chat/stream` | POST | Streaming chat |
-
-### Admin (requires authentication)
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/admin/*` | * | Admin operations |
-| `/api/config/*` | * | Configuration management |
-| `/api/sources/*` | * | Source document management |
-| `/api/ingestion/*` | * | Document ingestion |
-| `/api/analytics/*` | GET | Usage analytics |
-| `/api/performance/*` | GET | Performance metrics |
-
-## RAG Service
-
-The RAG (Retrieval-Augmented Generation) service handles document retrieval and LLM interactions.
-
-### Setup
+### "No module named 'app'" error
 ```bash
 cd rag-service
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+source venv/bin/activate
+pip install -e .
 ```
 
-### Document Ingestion
+### Database connection refused
 ```bash
-# From project root
-python ingest_sources_cli.py --help
+# macOS
+brew services start postgresql@14
+
+# Linux
+sudo systemctl start postgresql
 ```
 
-See `rag-service/QUICK_START_STATEFUL.md` for detailed setup instructions.
-
-## Testing
-
-```bash
-# Run all tests
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-```
-
-## Deployment
-
-### PM2 (Production)
-```bash
-# Setup
-npm run deploy:setup
-
-# Deploy
-npm run deploy:production
-
-# Rollback
-npm run rollback:production
-```
-
-### Docker
-```bash
-docker-compose up -d
-```
+---
 
 ## Project Structure
 
@@ -259,21 +322,26 @@ docker-compose up -d
 │   ├── pages/              # Page components
 │   ├── hooks/              # Custom React hooks
 │   ├── context/            # React context providers
-│   ├── services/           # API client services
-│   └── utils/              # Utility functions
+│   └── services/           # API client services
 ├── server/                 # Express backend
-│   ├── routes/             # API route handlers
+│   ├── controllers/        # Request handlers
+│   ├── routes/             # API route definitions
 │   ├── middleware/         # Express middleware
-│   ├── services/           # Business logic
-│   └── config/             # Server configuration
+│   └── services/           # Business logic
 ├── rag-service/            # Python RAG service
 │   ├── app/                # FastAPI application
-│   ├── config/             # RAG configuration
-│   └── data/               # Document sources
-├── public/                 # Static assets
-├── docs/                   # Documentation
-└── scripts/                # Deployment scripts
+│   │   ├── api/            # API endpoints
+│   │   ├── core/           # Core config, logging
+│   │   ├── pipelines/      # Ingestion & retrieval
+│   │   └── services/       # Business logic
+│   ├── venv/               # Python virtual environment
+│   └── requirements.txt    # Python dependencies
+├── scripts/                # Helper scripts
+├── start-local-dev.sh      # Local dev startup script
+└── .env                    # Environment variables (create from .env.example)
 ```
+
+---
 
 ## License
 
