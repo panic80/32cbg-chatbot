@@ -405,11 +405,30 @@ async def create_backup(
                 if request.include_vectors and request.backup_type in ["full"]:
                     vector_backup_dir = f"{backup_dir}/vectors"
                     os.makedirs(vector_backup_dir, exist_ok=True)
-                    
+
                     # Export vectors (implementation depends on vector store type)
-                    if settings.VECTOR_STORE_TYPE == "chroma":
-                        # Copy Chroma DB directory
-                        shutil.copytree("./chroma_db", f"{vector_backup_dir}/chroma_db")
+                    if settings.vector_store_type == "pgvector":
+                        # Use pg_dump to backup PostgreSQL vector store
+                        import subprocess
+                        dump_file = f"{vector_backup_dir}/pgvector_backup.sql"
+                        env = os.environ.copy()
+                        env["PGPASSWORD"] = settings.postgres_password or ""
+
+                        try:
+                            subprocess.run([
+                                "pg_dump",
+                                "-h", settings.postgres_host,
+                                "-p", str(settings.postgres_port),
+                                "-U", settings.postgres_user,
+                                "-d", settings.postgres_db,
+                                "-t", settings.pgvector_table_name,
+                                "-f", dump_file,
+                            ], env=env, check=True)
+                            logger.info(f"PostgreSQL vector backup created: {dump_file}")
+                        except subprocess.CalledProcessError as e:
+                            logger.error(f"pg_dump failed: {e}")
+                        except FileNotFoundError:
+                            logger.warning("pg_dump not found - skipping vector backup")
                 
                 # Backup indices if requested
                 if request.include_indices and request.backup_type in ["full"]:
@@ -537,18 +556,35 @@ async def restore_backup(
 
                 # Restore vectors
                 if manifest["components"]["vectors"]:
-                    if os.path.exists(f"{backup_dir}/vectors/chroma_db"):
+                    pgvector_backup = f"{backup_dir}/vectors/pgvector_backup.sql"
+                    if os.path.exists(pgvector_backup):
                         # Stop vector store using container
                         vector_store = container.vector_store_manager
                         await vector_store.close()
 
-                        # Replace directory
-                        shutil.rmtree("./chroma_db", ignore_errors=True)
-                        shutil.copytree(f"{backup_dir}/vectors/chroma_db", "./chroma_db")
+                        # Use psql to restore PostgreSQL vector store
+                        import subprocess
+                        env = os.environ.copy()
+                        env["PGPASSWORD"] = settings.postgres_password or ""
+
+                        try:
+                            subprocess.run([
+                                "psql",
+                                "-h", settings.postgres_host,
+                                "-p", str(settings.postgres_port),
+                                "-U", settings.postgres_user,
+                                "-d", settings.postgres_db,
+                                "-f", pgvector_backup,
+                            ], env=env, check=True)
+                            logger.info("PostgreSQL vectors restored from backup")
+                        except subprocess.CalledProcessError as e:
+                            logger.error(f"psql restore failed: {e}")
+                        except FileNotFoundError:
+                            logger.warning("psql not found - skipping vector restore")
 
                         # Restart vector store
                         await vector_store.initialize()
-                        logger.info("Vectors restored from backup")
+                        logger.info("Vector store reinitialized")
                 
                 # Restore indices
                 if manifest["components"]["indices"]:

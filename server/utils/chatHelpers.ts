@@ -1,7 +1,10 @@
 import type { Response } from 'express';
+import { respondWithError } from './http.js';
+import type { Logger } from '../services/logger.js';
 
 /**
  * Error response utilities for consistent error handling across chat controllers
+ * These are convenience wrappers around the core respondWithError function.
  */
 
 export interface ApiError {
@@ -9,39 +12,70 @@ export interface ApiError {
   message: string;
 }
 
-export const sendConfigurationError = (res: Response, service: string): Response => {
-  return res.status(500).json({
-    error: 'Configuration Error',
+export interface ErrorOptions {
+  logger?: Logger;
+  cause?: unknown;
+}
+
+export const sendConfigurationError = (
+  res: Response,
+  service: string,
+  options?: ErrorOptions,
+): Response => {
+  return respondWithError(res, {
+    status: 500,
+    error: 'ConfigurationError',
     message: `${service} API key is not configured.`,
-  } as ApiError);
+    ...options,
+  });
 };
 
-export const sendBadRequestError = (res: Response, message: string): Response => {
-  return res.status(400).json({
-    error: 'Bad Request',
+export const sendBadRequestError = (
+  res: Response,
+  message: string,
+  options?: ErrorOptions,
+): Response => {
+  return respondWithError(res, {
+    status: 400,
+    error: 'BadRequest',
     message,
-  } as ApiError);
+    ...options,
+  });
 };
 
-export const sendInternalServerError = (res: Response, message: string): Response => {
-  return res.status(500).json({
-    error: 'Internal Server Error',
+export const sendInternalServerError = (
+  res: Response,
+  message: string,
+  options?: ErrorOptions,
+): Response => {
+  return respondWithError(res, {
+    status: 500,
+    error: 'InternalServerError',
     message,
-  } as ApiError);
+    ...options,
+  });
 };
 
-export const sendRateLimitError = (res: Response): Response => {
-  return res.status(429).json({
-    error: 'Rate Limit Exceeded',
+export const sendRateLimitError = (res: Response, options?: ErrorOptions): Response => {
+  return respondWithError(res, {
+    status: 429,
+    error: 'RateLimitExceeded',
     message: 'Too many requests to the AI provider. Please try again later.',
-  } as ApiError);
+    ...options,
+  });
 };
 
-export const sendUnsupportedProviderError = (res: Response, provider: string): Response => {
-  return res.status(400).json({
-    error: 'Bad Request',
+export const sendUnsupportedProviderError = (
+  res: Response,
+  provider: string,
+  options?: ErrorOptions,
+): Response => {
+  return respondWithError(res, {
+    status: 400,
+    error: 'BadRequest',
     message: `Unsupported provider: ${provider}`,
-  } as ApiError);
+    ...options,
+  });
 };
 
 /**

@@ -59,7 +59,8 @@ def setup_logging(log_level: str = "INFO", log_format: str = "json") -> None:
     
     # Set specific loggers
     logging.getLogger("uvicorn").setLevel(logging.INFO)
-    logging.getLogger("chromadb").setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("psycopg").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     
 

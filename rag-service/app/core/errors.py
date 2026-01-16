@@ -148,9 +148,12 @@ RECOVERABLE_EXCEPTION_PATTERNS = {
     "openai.APIStatusError": (True, 5),
     "openai.APIConnectionError": (True, 3),
     "openai.APITimeoutError": (True, 5),
-    # Chroma errors
-    "chromadb.errors.ChromaError": (True, 2),
-    "chromadb.errors.InvalidCollectionException": (False, 0),
+    # PostgreSQL/pgvector errors
+    "psycopg.OperationalError": (True, 3),
+    "psycopg.InterfaceError": (True, 2),
+    "sqlalchemy.exc.OperationalError": (True, 3),
+    "sqlalchemy.exc.InterfaceError": (True, 2),
+    "sqlalchemy.exc.DisconnectionError": (True, 3),
     # Redis errors
     "redis.ConnectionError": (True, 5),
     "redis.TimeoutError": (True, 3),

@@ -55,9 +55,13 @@ export const useRAGConfig = () => {
     }
   }, []);
 
-  // Load config from RAG service on mount
+  // Load config from RAG service on mount with small delay to stagger API requests
+  // This prevents rate limit issues when multiple hooks fetch simultaneously
   useEffect(() => {
-    loadConfig();
+    const timeoutId = setTimeout(() => {
+      loadConfig();
+    }, 100);
+    return () => clearTimeout(timeoutId);
   }, [loadConfig]);
 
   const updateConfig = useCallback(async (updates: Partial<RAGConfig>) => {

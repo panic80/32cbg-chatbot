@@ -44,7 +44,7 @@ export const request = async (
     headers.set('Accept', 'application/json');
   }
 
-  const response = await fetch(input, { ...init, headers });
+  const response = await fetch(input, { ...init, headers, credentials: 'include' });
 
   if (!response.ok) {
     const data = init.parseErrorResponse === false ? undefined : await parseErrorPayload(response);

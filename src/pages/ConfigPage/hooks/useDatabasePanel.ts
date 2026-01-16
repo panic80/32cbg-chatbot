@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { apiClient, ApiError } from '@/api/client';
 import type { DatabaseSource, DatabaseStats } from '../types';
 
@@ -115,27 +115,7 @@ const fetchDatabaseStats = async (): Promise<DatabaseStats> => {
     }
   }
 
-  try {
-    const healthData = await apiClient.getJson<Record<string, unknown>>('/health?checkRag=true');
-    const ragService = healthData?.ragService as Record<string, unknown> | undefined;
-    const components = ragService?.components as Record<string, unknown> | undefined;
-    const vectorStore = components?.vector_store as Record<string, unknown> | undefined;
-    if (vectorStore) {
-      const documentCount =
-        typeof vectorStore.document_count === 'number' ? vectorStore.document_count : 0;
-      return {
-        totalDocuments: documentCount,
-        totalChunks: documentCount,
-        totalSources: 0,
-        lastIngestedAt: null,
-      };
-    }
-  } catch (error) {
-    if (!(error instanceof ApiError)) {
-      console.error('Health endpoint request failed:', error);
-    }
-  }
-
+  // Note: /health?checkRag=true fallback removed - endpoint doesn't exist and causes 404 errors
   return empty;
 };
 
@@ -176,8 +156,14 @@ export const useDatabasePanel = (
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SourceSort>('date');
   const [isBuildingBM25, setIsBuildingBM25] = useState(false);
+  const isRefreshingRef = useRef(false);
 
   const refreshMetrics = useCallback(async () => {
+    // Prevent duplicate in-flight requests
+    if (isRefreshingRef.current) {
+      return;
+    }
+    isRefreshingRef.current = true;
     setIsLoading(true);
     setError(null);
     try {
@@ -195,6 +181,7 @@ export const useDatabasePanel = (
       setSources([]);
     } finally {
       setIsLoading(false);
+      isRefreshingRef.current = false;
     }
   }, []);
 

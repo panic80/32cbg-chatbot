@@ -34,7 +34,7 @@ const timingSafeEqual = (a: string, b: string): boolean => {
 };
 
 // Brute-force protection configuration
-const LOCKOUT_THRESHOLD = 5; // Number of failed attempts before lockout
+const LOCKOUT_THRESHOLD = 100; // Number of failed attempts before lockout (increased for dev)
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes lockout
 const CLEANUP_INTERVAL_MS = 60 * 1000; // Cleanup every minute
 

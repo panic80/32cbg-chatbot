@@ -613,15 +613,18 @@ class OptimizedVectorStoreWriter:
                 batch_embeddings = embeddings_array[i:i + batch_size].tolist()
                 batch_ids = all_doc_ids[i:i + batch_size]
                 
-                # Run synchronous add_texts in executor
+                # Run synchronous add_embeddings in executor (add_texts ignores embeddings kwarg)
+                # Using default args in lambda to fix closure capture issues in the loop
+                # Pass ids=None to let PGVector generate UUIDs (original doc.id is stored in metadata)
                 ids = await loop.run_in_executor(
                     None,
-                    lambda: self.vector_store.add_texts(
-                        texts=batch_texts,
-                        metadatas=batch_metadatas,
-                        embeddings=batch_embeddings,
-                        ids=batch_ids
-                    )
+                    lambda bt=batch_texts, be=batch_embeddings, bm=batch_metadatas:
+                        self.vector_store.add_embeddings(
+                            texts=bt,
+                            embeddings=be,
+                            metadatas=bm,
+                            ids=None  # Let PGVector generate proper UUIDs
+                        )
                 )
                 all_ids.extend(ids)
                 docs_stored += len(batch_texts)

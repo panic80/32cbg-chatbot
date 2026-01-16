@@ -16,8 +16,9 @@ logger = get_logger(__name__)
 
 # Download required NLTK data
 try:
-    nltk.data.find('tokenizers/punkt')
+    nltk.data.find('tokenizers/punkt_tab')
 except LookupError:
+    nltk.download('punkt_tab', quiet=True)
     nltk.download('punkt', quiet=True)
 
 

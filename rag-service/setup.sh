@@ -43,8 +43,8 @@ OPENAI_API_KEY=your_openai_key_here
 GEMINI_API_KEY=your_gemini_key_here
 ANTHROPIC_API_KEY=your_anthropic_key_here
 
-# Redis Configuration
-REDIS_URL=redis://localhost:6379
+# Redis Configuration (OPTIONAL - leave empty to disable)
+REDIS_URL=
 
 # RAG Configuration
 RAG_CHUNK_SIZE=1000
@@ -61,9 +61,9 @@ echo "✨ Setup complete!"
 echo ""
 echo "Next steps:"
 echo "1. Edit .env file and add your API keys"
-echo "2. Start Redis (e.g., systemctl start redis-server)"
-echo "3. Activate venv: source venv/bin/activate"
-echo "4. Run the service: uvicorn app.main:app --reload --port 8000"
-echo "5. Review DEPLOYMENT_GUIDE.md for systemd setup"
+echo "2. Activate venv: source venv/bin/activate"
+echo "3. Run the service: uvicorn app.main:app --reload --port 8000"
 echo ""
 echo "📖 API docs will be available at: http://localhost:8000/api/v1/docs"
+echo ""
+echo "💡 Redis is OPTIONAL - the service works without it (uses in-memory fallbacks)"

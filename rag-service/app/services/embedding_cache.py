@@ -1,5 +1,6 @@
 """Embedding cache service for faster document processing."""
 
+import asyncio
 import hashlib
 import json
 import pickle
@@ -137,61 +138,72 @@ class EmbeddingCacheService:
             return False
             
     async def get_embeddings_batch(
-        self, 
-        texts: List[str], 
+        self,
+        texts: List[str],
         model: str
     ) -> Tuple[Dict[int, List[float]], List[int]]:
-        """Get multiple cached embeddings.
-        
+        """Get multiple cached embeddings using parallel lookups.
+
         Args:
             texts: List of texts
             model: Embedding model name
-            
+
         Returns:
             Tuple of (cached embeddings by index, list of missing indices)
         """
+        # Create tasks for parallel cache lookups
+        tasks = [self.get_embedding(text, model) for text in texts]
+
+        # Execute all lookups in parallel
+        results = await asyncio.gather(*tasks)
+
+        # Process results
         cached_embeddings = {}
         missing_indices = []
-        
-        for i, text in enumerate(texts):
-            embedding = await self.get_embedding(text, model)
+
+        for i, embedding in enumerate(results):
             if embedding is not None:
                 cached_embeddings[i] = embedding
             else:
                 missing_indices.append(i)
-                
+
         logger.info(
             f"Embedding cache batch lookup: {len(cached_embeddings)} hits, "
             f"{len(missing_indices)} misses out of {len(texts)} total"
         )
-        
+
         return cached_embeddings, missing_indices
         
     async def set_embeddings_batch(
-        self, 
-        texts: List[str], 
-        model: str, 
+        self,
+        texts: List[str],
+        model: str,
         embeddings: List[List[float]]
     ) -> int:
-        """Cache multiple embeddings.
-        
+        """Cache multiple embeddings using parallel writes.
+
         Args:
             texts: List of texts
             model: Embedding model name
             embeddings: List of embedding vectors
-            
+
         Returns:
             Number of successfully cached embeddings
         """
         if len(texts) != len(embeddings):
             logger.error("Texts and embeddings length mismatch")
             return 0
-            
-        success_count = 0
-        for text, embedding in zip(texts, embeddings):
-            if await self.set_embedding(text, model, embedding):
-                success_count += 1
-                
+
+        # Create tasks for parallel cache writes
+        tasks = [
+            self.set_embedding(text, model, embedding)
+            for text, embedding in zip(texts, embeddings)
+        ]
+
+        # Execute all writes in parallel
+        results = await asyncio.gather(*tasks)
+
+        success_count = sum(1 for r in results if r)
         logger.info(f"Cached {success_count} out of {len(texts)} embeddings")
         return success_count
         

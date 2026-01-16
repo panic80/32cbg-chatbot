@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { respondWithError } from '../utils/http.js';
+import { createScopedLogger } from '../utils/loggerHelpers.js';
 
 interface IngestionControllerConfig {
   validateIngestionUrl?: (url: string) => Promise<string>;
@@ -16,13 +17,7 @@ export const createIngestionController = ({
   ragService,
   logger,
 }: IngestionControllerConfig) => {
-  const scopedLogger = logger?.child ? logger.child({ scope: 'controller:ingestion' }) : logger;
-  const emit = (level: string, message: string, meta?: unknown) => {
-    const loggerFunc = (scopedLogger as unknown as Record<string, unknown>)[level];
-    if (typeof loggerFunc === 'function') {
-      (loggerFunc as Function)(message, meta);
-    }
-  };
+  const { scopedLogger, emit } = createScopedLogger(logger, 'controller:ingestion');
 
   const sanitizeUrl = async (
     rawUrl: string | undefined,

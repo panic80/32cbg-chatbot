@@ -4,6 +4,7 @@
  */
 
 export * from './use-autosize-textarea';
+export * from './useAsyncData';
 export * from './useMobileKeyboard';
 export * from './useSuggestionVisibility';
 export * from './use-copy-to-clipboard';

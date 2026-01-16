@@ -204,10 +204,7 @@ export default function ConfigPage() {
     void loadVisitSummary();
   }, [loadVisitSummary]);
 
-  // Computed values for filtered and sorted sources
-  useEffect(() => {
-    refreshDatabaseMetrics();
-  }, [refreshDatabaseMetrics]);
+  // Database metrics are loaded lazily when the database tab is active (see useEffect below)
 
   useEffect(() => {
     if (activeTab === 'logs' && !logsInitialized) {

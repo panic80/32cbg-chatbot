@@ -27,7 +27,7 @@ class QueryLogger:
     def __init__(self, db_path: Optional[str] = None):
         """Initialize query logger."""
         self.db_path = db_path or os.path.join(
-            settings.chroma_persist_directory, 
+            settings.data_directory,
             "query_history.db"
         )
         self.enabled = getattr(settings, 'enable_query_logging', True)

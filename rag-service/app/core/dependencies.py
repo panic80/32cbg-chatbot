@@ -6,7 +6,7 @@ from functools import lru_cache
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_chroma import Chroma
+from langchain_postgres import PGVectorStore
 
 from app.core.config import settings
 from app.core.vectorstore import VectorStoreManager
@@ -17,14 +17,14 @@ logger = get_logger(__name__)
 # Global instances
 _vector_store_manager: Optional[VectorStoreManager] = None
 _embeddings: Optional[Embeddings] = None
-_vectorstore: Optional[Chroma] = None
+_vectorstore: Optional[PGVectorStore] = None
 
 
 @lru_cache(maxsize=1)
 def get_embeddings() -> Embeddings:
     """Get or create embeddings instance."""
     global _embeddings
-    
+
     if _embeddings is None:
         if settings.openai_api_key:
             logger.info(f"Creating OpenAI embeddings: {settings.openai_embedding_model}")
@@ -41,41 +41,49 @@ def get_embeddings() -> Embeddings:
             )
         else:
             raise ValueError("No embedding API key configured")
-    
+
     return _embeddings
 
 
-async def get_vectorstore() -> Chroma:
+async def get_vectorstore() -> PGVectorStore:
     """Get or create vector store instance."""
     global _vectorstore
-    
+
     if _vectorstore is None:
         embeddings = get_embeddings()
-        
-        # Create Chroma instance
-        import os
-        os.makedirs(settings.chroma_persist_directory, exist_ok=True)
-        
-        _vectorstore = Chroma(
-            collection_name=settings.chroma_collection_name,
-            embedding_function=embeddings,
-            persist_directory=settings.chroma_persist_directory,
-            collection_metadata={"hnsw:space": "cosine"},
+
+        # Build connection string
+        if settings.database_url:
+            connection_string = settings.database_url
+            # Ensure psycopg driver
+            if "+asyncpg" in connection_string:
+                connection_string = connection_string.replace("+asyncpg", "+psycopg")
+            elif "postgresql://" in connection_string and "+psycopg" not in connection_string:
+                connection_string = connection_string.replace("postgresql://", "postgresql+psycopg://")
+        else:
+            password = settings.postgres_password or ""
+            connection_string = f"postgresql+psycopg://{settings.postgres_user}:{password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_db}"
+
+        _vectorstore = PGVectorStore(
+            connection=connection_string,
+            collection_name=settings.pgvector_table_name,
+            embeddings=embeddings,
+            use_jsonb=True,
         )
-        logger.info("Vector store instance created")
-    
+        logger.info("PGVectorStore instance created")
+
     return _vectorstore
 
 
 async def get_vector_store_manager() -> VectorStoreManager:
     """Get or create vector store manager instance."""
     global _vector_store_manager
-    
+
     if _vector_store_manager is None:
         _vector_store_manager = VectorStoreManager()
         await _vector_store_manager.initialize()
         logger.info("Vector store manager initialized")
-    
+
     return _vector_store_manager
 
 

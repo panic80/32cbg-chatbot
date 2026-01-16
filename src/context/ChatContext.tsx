@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useCallback, useEffect } 
 import { ChatContextType, ChatState, ChatAction, Message } from './ChatTypes';
 import { chatReducer, initialState } from './ChatReducer';
 import { fetchTravelInstructions } from '../api/travelInstructions';
+import { generateMessageId } from '@/utils/chatUtils';
 
 interface ExtendedChatContextType extends ChatContextType {
   generateMessageId: () => string;
@@ -27,11 +28,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
     loadInstructions();
-  }, []);
-
-  // Generate unique message ID
-  const generateMessageId = useCallback(() => {
-    return `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }, []);
 
   // Enhanced context value with utility methods

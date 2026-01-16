@@ -1,6 +1,10 @@
 from dataclasses import field
 """Configuration settings for RAG service."""
 
+from dotenv import load_dotenv
+# Load .env file before importing settings (override=True ensures .env takes precedence over shell env vars)
+load_dotenv(override=True)
+
 from pydantic_settings import BaseSettings
 from typing import Optional, List
 import os
@@ -54,9 +58,19 @@ class Settings(BaseSettings):
     smart_model_name: str = "gpt-4o"
 
     # Vector Store Configuration
-    vector_store_type: str = "chroma"  # chroma or qdrant
-    chroma_persist_directory: str = "./chroma_db"
-    chroma_collection_name: str = "travel_instructions"
+    vector_store_type: str = "pgvector"
+    data_directory: str = "./data"  # Directory for SQLite databases and other local data
+
+    # PostgreSQL/pgvector Configuration
+    # Supports DATABASE_URL or individual components
+    database_url: Optional[str] = None  # Full URL takes precedence
+    postgres_host: str = "localhost"
+    postgres_port: int = 5432
+    postgres_user: str = "rag_user"
+    postgres_password: Optional[str] = None
+    postgres_db: str = "rag_vectorstore"
+    pgvector_table_name: str = "travel_instructions"  # Custom table name
+    pgvector_vector_dimensions: int = 1536  # Must match embedding model
     
     # Document Processing
     chunk_size: int = 1024
@@ -94,7 +108,8 @@ class Settings(BaseSettings):
     smart_mode_short_answer_max_tokens: int = 600  # Cap max tokens when users request short answers
     
     # Caching Configuration
-    redis_url: Optional[str] = "redis://localhost:6379"
+    # Redis disabled by default - set REDIS_URL env var to enable
+    redis_url: Optional[str] = None
     cache_ttl: int = 3600  # 1 hour
     embedding_cache_ttl: int = 604800  # 1 week
     enable_embedding_cache: bool = True  # Enable embedding caching for faster ingestion
@@ -283,3 +298,19 @@ if os.getenv("REDIS_URL"):
 # HyDE can be disabled via environment variable
 if os.getenv("RAG_ENABLE_HYDE") is not None:
     settings.enable_hyde = os.getenv("RAG_ENABLE_HYDE", "true").lower() in ("true", "1", "yes")
+
+# PostgreSQL configuration from environment
+if os.getenv("DATABASE_URL"):
+    settings.database_url = os.getenv("DATABASE_URL")
+if os.getenv("POSTGRES_HOST"):
+    settings.postgres_host = os.getenv("POSTGRES_HOST")
+if os.getenv("POSTGRES_PORT"):
+    settings.postgres_port = int(os.getenv("POSTGRES_PORT"))
+if os.getenv("POSTGRES_USER"):
+    settings.postgres_user = os.getenv("POSTGRES_USER")
+if os.getenv("POSTGRES_PASSWORD"):
+    settings.postgres_password = os.getenv("POSTGRES_PASSWORD")
+if os.getenv("POSTGRES_DB"):
+    settings.postgres_db = os.getenv("POSTGRES_DB")
+if os.getenv("PGVECTOR_TABLE_NAME"):
+    settings.pgvector_table_name = os.getenv("PGVECTOR_TABLE_NAME")

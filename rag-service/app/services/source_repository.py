@@ -21,7 +21,7 @@ class SourceRepository:
 
     def __init__(self, db_path: Optional[str] = None) -> None:
         self.db_path = db_path or os.path.join(
-            settings.chroma_persist_directory,
+            settings.data_directory,
             "source_catalog.db"
         )
         self._initialized = False

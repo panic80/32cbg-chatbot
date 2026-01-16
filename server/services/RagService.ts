@@ -5,8 +5,8 @@ import {
   DEFAULT_RETRY_DELAY_MS,
   RAG_SERVICE_URL,
 } from '../config/constants.js';
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { createScopedLogger } from '../utils/loggerHelpers.js';
+import { withRetry } from './retryService.js';
 
 interface RagServiceConfig {
   httpClient?: AxiosInstance;
@@ -34,15 +34,9 @@ export const createRagService = ({
   const maxRetries = config.ingestMaxRetries ?? config.maxRetries ?? DEFAULT_MAX_RETRIES;
   const retryDelayMs = config.ingestRetryDelay ?? config.retryDelay ?? DEFAULT_RETRY_DELAY_MS;
 
-  const scopedLogger = logger?.child ? logger.child({ scope: 'service:rag' }) : logger;
-    const emit = (level: string, message: string, meta?: unknown) => {
-      const loggerFunc = (scopedLogger as unknown as Record<string, unknown>)[level];
-      if (typeof loggerFunc === 'function') {
-          (loggerFunc as Function)(message, meta);
-      }
-    };
-  
-    const normalizeHttpClient = (): AxiosInstance => {
+  const { emit } = createScopedLogger(logger, 'service:rag');
+
+  const normalizeHttpClient = (): AxiosInstance => {
       if (httpClient && (typeof httpClient.post === 'function' && typeof httpClient.get === 'function')) {
         return httpClient;
       }
@@ -51,38 +45,26 @@ export const createRagService = ({
   
     const client = normalizeHttpClient();
   
-    const prepareHeaders = (): Record<string, string> => ({
-      'Content-Type': 'application/json',
-      ...(typeof getRagAuthHeaders === 'function' ? getRagAuthHeaders() : {}),
-    });
-  
-    const postWithRetry = async (endpoint: string, payload: unknown): Promise<AxiosResponse> => {
-      let lastError: Error | undefined;
-      for (let attempt = 1; attempt <= Math.max(1, maxRetries as number); attempt += 1) {
-        try {
-          const response = await client.post(endpoint, payload, {
-            timeout: (ingestTimeout as number) || DEFAULT_INGEST_TIMEOUT_MS,
-            headers: prepareHeaders(),
-          });
-          return response;
-        } catch (error: unknown) {        const err = error as Error & { response?: { status: number } };
-        lastError = err;
-        const status = err?.response?.status;
-        emit('warn', 'rag_service.postFailed', {
-          endpoint,
-          attempt,
-          status,
-          error: err?.message,
+  const prepareHeaders = (): Record<string, string> => ({
+    'Content-Type': 'application/json',
+    ...(typeof getRagAuthHeaders === 'function' ? getRagAuthHeaders() : {}),
+  });
+
+  const postWithRetry = async (endpoint: string, payload: unknown): Promise<AxiosResponse> => {
+    return withRetry(
+      async () => {
+        return client.post(endpoint, payload, {
+          timeout: (ingestTimeout as number) || DEFAULT_INGEST_TIMEOUT_MS,
+          headers: prepareHeaders(),
         });
-        if (status && status < 500) {
-          break;
-        }
-        if (attempt < Math.max(1, maxRetries as number)) {
-          await wait((retryDelayMs as number) * attempt);
-        }
-      }
-    }
-    throw lastError;
+      },
+      {
+        maxRetries: maxRetries as number,
+        initialDelayMs: retryDelayMs as number,
+        emit,
+        logScope: 'rag_service',
+      },
+    );
   };
 
   const ingest = async ({ url, content, type, metadata, forceRefresh }: IngestOptions) => {

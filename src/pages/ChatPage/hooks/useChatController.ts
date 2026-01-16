@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  DEFAULT_CHAT_INPUT_HEIGHT_PX,
   DEFAULT_MODEL_ID,
   LOADING_DELAY_MS,
-  MENU_HIGHLIGHT_DURATION_MS,
   NEW_REPLY_PILL_MARGIN_PX,
   StorageKeys,
   getModelDisplayName,
@@ -14,11 +11,13 @@ import { MAINTENANCE_MODE } from '@/constants';
 import { getLocalStorageItem, removeLocalStorageItem } from '@/utils/storage';
 import { exportConversationAsMarkdown } from '@/utils/exportConversation';
 import { useTheme as useThemeContext } from '@/context/ThemeContext';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
+  useChatInputState,
   useChatTheme,
   useCommandPalette,
   useDisclaimer,
-  useLocalStorage,
+  useMenuHighlight,
   useMessageOperations,
   useMessageWindow,
   useModelMode,
@@ -32,7 +31,16 @@ interface UseChatControllerParams {
 }
 
 export const useChatController = ({ propTheme, propToggleTheme }: UseChatControllerParams) => {
-  const [input, setInput] = useState('');
+  // Use extracted hooks for cleaner separation
+  const { input, setInput, inputHeight } = useChatInputState();
+  const {
+    menuOpen,
+    setMenuOpen,
+    menuHighlight,
+    handleModePillClick,
+    handleShortAnswerPillClick,
+  } = useMenuHighlight();
+
   const [currentModel, setCurrentModel] = useState(getModelDisplayName(DEFAULT_MODEL_ID));
   const [isRecording, setIsRecording] = useState(false);
   const [collapsedMessages, setCollapsedMessages] = useState<Set<string>>(new Set());
@@ -45,39 +53,13 @@ export const useChatController = ({ propTheme, propToggleTheme }: UseChatControl
     return savedModel === 'gpt-5-mini' ? 'smart' : 'fast';
   });
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [menuHighlight, setMenuHighlight] = useState<'none' | 'model' | 'short'>('none');
   const [conversationId, setConversationId] = useState<string>('');
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [inputHeight, setInputHeight] = useState<number>(DEFAULT_CHAT_INPUT_HEIGHT_PX);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
   const { theme: contextTheme, toggleTheme: contextToggleTheme } = useThemeContext();
 
   useEffect(() => {
     removeLocalStorageItem(StorageKeys.hybridSearch);
-  }, []);
-
-  useEffect(() => {
-    const el = document.querySelector('[data-chat-input]') as HTMLElement | null;
-    if (!el) return;
-
-    const measure = () => {
-      setInputHeight(el.getBoundingClientRect().height || DEFAULT_CHAT_INPUT_HEIGHT_PX);
-    };
-    measure();
-
-    let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(() => measure());
-      ro.observe(el);
-    }
-
-    window.addEventListener('resize', measure);
-    return () => {
-      ro?.disconnect();
-      window.removeEventListener('resize', measure);
-    };
   }, []);
 
   const pillMargin = NEW_REPLY_PILL_MARGIN_PX;
@@ -102,18 +84,6 @@ export const useChatController = ({ propTheme, propToggleTheme }: UseChatControl
     showMore: showMoreMessages,
   } = useMessageWindow({ messages, pendingMessage });
 
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(location.search);
-      const q = params.get('q');
-      if (q && q.trim().length > 0) {
-        setInput(q.trim());
-      }
-    } catch {
-      // no-op
-    }
-  }, [location.search]);
-
   const theme = propTheme ?? contextTheme;
 
   useEffect(() => {
@@ -125,27 +95,6 @@ export const useChatController = ({ propTheme, propToggleTheme }: UseChatControl
 
   useChatTheme(theme, propTheme);
   useModelMode(modelMode, setCurrentModel);
-
-  const triggerMenu = useCallback((highlight: 'model' | 'short') => {
-    setMenuHighlight(highlight);
-    setMenuOpen(true);
-  }, []);
-
-  const handleModePillClick = useCallback(() => triggerMenu('model'), [triggerMenu]);
-  const handleShortAnswerPillClick = useCallback(() => triggerMenu('short'), [triggerMenu]);
-
-  useEffect(() => {
-    if (!menuOpen && menuHighlight !== 'none') {
-      setMenuHighlight('none');
-    }
-  }, [menuOpen, menuHighlight]);
-
-  useEffect(() => {
-    if (menuHighlight !== 'none') {
-      const timer = setTimeout(() => setMenuHighlight('none'), MENU_HIGHLIGHT_DURATION_MS);
-      return () => clearTimeout(timer);
-    }
-  }, [menuHighlight]);
 
   const { showDisclaimer, setShowDisclaimer } = useDisclaimer();
   const toggleTheme = propToggleTheme ?? contextToggleTheme;
